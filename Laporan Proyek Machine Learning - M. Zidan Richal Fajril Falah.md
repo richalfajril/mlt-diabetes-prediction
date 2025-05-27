@@ -360,21 +360,33 @@ for name, model in models.items():
     print(f"Accuracy for {name}: {accuracy:.4f}", end="\n\n")
 ```
 Hasil akurasi awal dari model-model dasar (sebelum *tuning*) adalah:
-* Accuracy for Decision Tree: **0.8636**
-* Accuracy for Random Forest: **0.8766**
-* Accuracy for Gradient Boosting: **0.8896**
-* Accuracy for Extra Trees: **0.8701**
-* Accuracy for AdaBoost: **0.8831**
-* Accuracy for LightGBM: **0.8636**
-* Accuracy for XGBoost: **0.8571**
+| Model                 | Akurasi Awal (Data Uji) |
+| :-------------------- | :---------------------- |
+| Decision Tree         | 0.8636                  |
+| Random Forest         | 0.8766                  |
+| Gradient Boosting     | 0.8896                  |
+| Extra Trees           | 0.8701                  |
+| AdaBoost              | 0.8831                  |
+| LightGBM              | 0.8636                  |
+| XGBoost               | 0.8571                  |
 
 ### 3. Hyperparameter Tuning
 
-*Hyperparameter tuning* dilakukan menggunakan **Grid Search with Cross-Validation (cv=5)** untuk menemukan kombinasi *hyperparameter* terbaik bagi setiap model.
+Kinerja model sangat bergantung pada *hyperparameter* yang digunakan. Tahap ini bertujuan untuk menemukan kombinasi *hyperparameter* terbaik untuk setiap model guna memaksimalkan kinerjanya. Teknik **Grid Search with Cross-Validation (CV=5)** digunakan untuk eksplorasi *hyperparameter* secara sistematis.
 
-**Parameter Grid** yang digunakan untuk setiap model adalah sebagai berikut:
+**Parameter Grid yang Digunakan:**
+* **Decision Tree**: `max_depth`, `min_samples_split`, `min_samples_leaf`
+* **Random Forest**: `max_depth`, `max_features`, `min_samples_split`, `n_estimators`
+* **Gradient Boosting**: `n_estimators`, `learning_rate`, `max_depth`, `subsample`
+* **Extra Trees**: `n_estimators`, `max_depth`, `min_samples_split`
+* **AdaBoost**: `n_estimators`, `learning_rate`
+* **LightGBM**: `learning_rate`, `n_estimators`, `colsample_bytree`, `num_leaves`, `max_depth`, `subsample`
+* **XGBoost**: `learning_rate`, `max_depth`, `n_estimators`, `colsample_bytree`, `subsample`
 
 ```python
+from sklearn.model_selection import GridSearchCV
+
+# Contoh parameter grid untuk Random Forest
 rf_params = {
     "max_depth": [10, 15, None],
     "max_features": ["sqrt", "log2", 5],
@@ -382,62 +394,7 @@ rf_params = {
     "n_estimators": [100, 200]
 }
 
-decision_tree_params = {
-    'max_depth': [None, 5, 10, 15],
-    'min_samples_split': [2, 5, 10, 15],
-    'min_samples_leaf': [1, 2, 4, 8]
-}
-
-gradient_boosting_params = {
-    'n_estimators': [100, 200, 300],
-    'learning_rate': [0.01, 0.1, 0.2],
-    'max_depth': [3, 5, 7],
-    'subsample': [0.8, 1.0]
-}
-
-extra_trees_params = {
-    'n_estimators': [100, 200, 300],
-    'max_depth': [None, 5, 10],
-    'min_samples_split': [2, 5, 10]
-}
-
-adaboost_params = {
-    'n_estimators': [50, 100, 200],
-    'learning_rate': [0.01, 0.1, 1.0]
-}
-
-lightgbm_params = {
-    "learning_rate": [0.01, 0.1],
-    "n_estimators": [300, 500],
-    "colsample_bytree": [0.7, 1],
-    "num_leaves": [15, 31],
-    "max_depth": [-1, 5, 10],
-    "subsample": [0.8, 1.0]
-}
-
-xgboost_params = {
-    "learning_rate": [0.1, 0.01],
-    "max_depth": [5, 8],
-    "n_estimators": [100, 200],
-    "colsample_bytree": [0.5, 1],
-    "subsample": [0.8, 1.0]
-}
-
-param_grids = {
-    'Decision Tree': decision_tree_params,
-    'Random Forest': rf_params,
-    'Gradient Boosting': gradient_boosting_params,
-    'Extra Trees': extra_trees_params,
-    'AdaBoost': adaboost_params,
-    'LightGBM': lightgbm_params,
-    'XGBoost': xgboost_params
-}
-```
-
-**Tuning Model:** `GridSearchCV` diinisialisasi dan dilatih pada data latih yang diseimbangkan (`X_train_smote`, `y_train_smote`). Model terbaik dan akurasi pada data uji dicatat.
-
-```python
-# Tuning Model
+# Contoh tuning model
 best_models = {}
 tuning_results = []
 
@@ -445,7 +402,7 @@ for name, model in models.items():
     print(f"🔧 Tuning {name}...")
     grid_search = GridSearchCV(
         estimator=model,
-        param_grid=param_grids[name],
+        param_grid=param_grids[name], # param_grids didefinisikan sebelumnya
         cv=5,
         n_jobs=-1,
         verbose=0
@@ -455,43 +412,29 @@ for name, model in models.items():
     best_model = grid_search.best_estimator_
     best_models[name] = best_model
 
-    # Prediksi pada data test
     y_pred = best_model.predict(X_test)
     test_acc = accuracy_score(y_test, y_pred)
 
-    # Simpan hasil tuning
     tuning_results.append({
         'Model': name,
         'Best Parameters': grid_search.best_params_,
         'Best CV Score': round(grid_search.best_score_, 4),
         'Test Accuracy': round(test_acc, 4)
     })
-
-    print(f"✅ {name} tuned.")
-    print(f"   Best Params: {grid_search.best_params_}")
-    print(f"   CV Score: {grid_search.best_score_:.4f}")
-    print(f"   Test Accuracy: {test_acc:.4f}\n")
-
-# Tampilkan hasil tuning dalam bentuk tabel
-tuning_df = pd.DataFrame(tuning_results)
-tuning_df = tuning_df.set_index('Model')
-print("\n📋 Tuning Summary:")
-display(tuning_df)
+    print(f"✅ {name} tuned.\n")
 ```
-[Tabel Tuning Summary]
 
-Hasil ringkasan *tuning* menunjukkan performa model setelah optimalisasi *hyperparameter*:
+**Hasil Penyetelan Hyperparameter (Tuning Summary):**
 
-| Model             | Best Parameters                                                                                                                    | Best CV Score | Test Accuracy |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------|---------------|---------------|
-| Decision Tree     | {'max_depth': 15, 'min_samples_leaf': 2, 'min_samples_split': 2}                                                                   | 0.8854        | 0.8701        |
-| Random Forest     | {'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}                                              | 0.9116        | 0.8636        |
-| Gradient Boosting | {'learning_rate': 0.2, 'max_depth': 7, 'n_estimators': 200, 'subsample': 0.8}                                                        | 0.9290        | 0.8701        |
-| Extra Trees       | {'max_depth': None, 'min_samples_split': 5, 'n_estimators': 300}                                                                   | 0.9016        | 0.8571        |
-| AdaBoost          | {'learning_rate': 1.0, 'n_estimators': 200}                                                                                        | 0.9028        | **0.9026** |
-| LightGBM          | {'colsample_bytree': 1, 'learning_rate': 0.1, 'max_depth': -1, 'n_estimators': 500, 'num_leaves': 31, 'subsample': 0.8}              | 0.9302        | 0.8636        |
-| XGBoost           | {'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}                                | 0.9315        | 0.8571        |
-
+| Model             | Best Parameters                                                | Best CV Score | Test Accuracy |
+| :---------------- | :------------------------------------------------------------- | :------------ | :------------ |
+| AdaBoost          | `{'learning_rate': 1.0, 'n_estimators': 200}`                  | 0.9028        | 0.9026        |
+| Gradient Boosting | `{'learning_rate': 0.2, 'max_depth': 7, 'n_estimators': 200, 'subsample': 0.8}` | 0.9290        | 0.8701        |
+| Decision Tree     | `{'max_depth': 15, 'min_samples_leaf': 2, 'min_samples_split': 2}` | 0.8854        | 0.8701        |
+| Random Forest     | `{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}` | 0.9116        | 0.8636        |
+| LightGBM          | `{'colsample_bytree': 1, 'learning_rate': 0.1, 'max_depth': -1, 'n_estimators': 500, 'num_leaves': 31, 'subsample': 0.8}` | 0.9302        | 0.8636        |
+| Extra Trees       | `{'max_depth': None, 'min_samples_split': 5, 'n_estimators': 300}` | 0.9016        | 0.8571        |
+| XGBoost           | `{'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}` | 0.9315        | 0.8571        |
 
 ### 4. Memilih Best Model untuk Dievaluasi
 
