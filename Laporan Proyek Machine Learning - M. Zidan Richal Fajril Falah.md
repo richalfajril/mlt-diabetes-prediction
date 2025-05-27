@@ -928,7 +928,9 @@ else:
 
 ROC AUC Score sebesar **0.9419** menunjukkan bahwa model AdaBoost memiliki kemampuan diskriminasi yang sangat baik dalam membedakan antara pasien yang menderita diabetes dan tidak. Nilai ini mendekati 1, mengindikasikan bahwa model memiliki probabilitas tinggi untuk memberikan peringkat yang lebih tinggi pada sampel positif (diabetes) dibandingkan sampel negatif (tidak diabetes) secara acak. Kurva ROC juga divisualisasikan, menunjukkan seberapa baik model menyeimbangkan *True Positive Rate* dan *False Positive Rate* di berbagai ambang batas.
 
-**Referensi:**
+---
+
+# Referensi:
 
 [1] World Health Organization. (2021). *Diabetes*. Retrieved from [https://www.who.int/news-room/fact-sheets/detail/diabetes](https://www.who.int/news-room/fact-sheets/detail/diabetes)/n
 
