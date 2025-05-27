@@ -226,7 +226,7 @@ Berdasarkan hasil EDA, beberapa potensi masalah teridentifikasi:
 
 Tentu, saya akan menjelaskan bagian "Data Preparation" secara rinci namun singkat, termasuk alasan mengapa setiap tahapan diperlukan, dan memastikan angka-angka sesuai dengan *notebook*.
 
-## **2. Data Preparation**
+## Data Preparation**
 
 Pada tahap ini, data dipersiapkan agar siap digunakan untuk pemodelan *machine learning*.
 
@@ -531,7 +531,7 @@ print(pd.Series(y_train_smote).value_counts()) # Output: 0    400, 1    400
 ```
 **Alasan:** Dataset memiliki ketidakseimbangan kelas pada variabel target (`Outcome`), di mana kelas non-diabetes (0) lebih banyak daripada kelas diabetes (1). Ketidakseimbangan ini dapat menyebabkan model cenderung memprediksi kelas mayoritas dan kurang akurat dalam memprediksi kelas minoritas. SMOTE membantu memperluas ruang keputusan untuk kelas minoritas tanpa hanya menduplikasi sampel yang sudah ada, sehingga meningkatkan kinerja model dalam mengidentifikasi kelas minoritas. Ini menunjukkan bahwa SMOTE berhasil menyeimbangkan jumlah sampel untuk kedua kelas di data pelatihan.
 
-## **3. Modeling**
+## **Modeling**
 
 Pada tahap ini, model *machine learning* dibangun dan dilatih untuk memprediksi penyakit diabetes berdasarkan data yang telah diproses.
 
