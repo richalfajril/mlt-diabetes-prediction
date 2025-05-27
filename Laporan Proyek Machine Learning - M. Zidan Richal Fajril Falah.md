@@ -97,7 +97,7 @@ Analisis univariat berfokus pada setiap fitur secara individual menggunakan stat
 
 * **Histogram**:
   
-    ![Histogram 1](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/histogram%201.png)
+    ![Histogram 1](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Histogram%201.png)
   
     * **Pregnancies, SkinThickness, Insulin, dan DiabetesPedigreeFunction**: Memiliki distribusi yang menceng (skewed).
     * **Glucose, BloodPressure, SkinThickness, Insulin, dan BMI**: Terdapat nilai 0 yang tidak realistis dan perlu ditangani.
