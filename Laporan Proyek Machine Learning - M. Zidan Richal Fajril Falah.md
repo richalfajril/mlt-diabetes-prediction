@@ -96,6 +96,7 @@ Analisis univariat berfokus pada setiap fitur secara individual menggunakan stat
     * **Outcome**: Sekitar 34.9% pasien (268 dari 768) didiagnosis menderita diabetes (Outcome = 1), menunjukkan adanya ketidakseimbangan kelas.
 
 * **Histogram**:
+    ![Histogram 1](histrogram 1.png)
     * **Pregnancies, SkinThickness, Insulin, dan DiabetesPedigreeFunction**: Memiliki distribusi yang menceng (skewed).
     * **Glucose, BloodPressure, SkinThickness, Insulin, dan BMI**: Terdapat nilai 0 yang tidak realistis dan perlu ditangani.
     * **Outcome**: Distribusi menunjukkan sekitar 65.1% 'Tidak Diabetes' dan 34.9% 'Diabetes', mengkonfirmasi ketidakseimbangan kelas.
