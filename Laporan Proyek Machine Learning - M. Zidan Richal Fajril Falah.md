@@ -3,13 +3,7 @@
 ## Domain Proyek
 <img src="https://cdn.who.int/media/images/default-source/imported/diabetes5.tmb-1920v.png?sfvrsn=1b2e7651_44" alt="Diabetes" width="100%" height="500px">
 
-[1]: https://www.who.int/news-room/fact-sheets/detail/diabetes "World Health Organization - Diabetes Fact Sheet"
-[2]: https://diabetes.org/about-diabetes/statistics/about-diabetes "American Diabetes Association - Statistics About Diabetes"
-[3]: https://doi.org/10.1016/j.heliyon.2024.e24536 "Reza et al. (2024) - Improving diabetes disease patients classification..."
-[4]: https://diabetesatlas.org/ "International Diabetes Federation - IDF Diabetes Atlas, 10th Edition"
-[5]: https://doi.org/10.14569/IJACSA.2020.0111162 "Sarwar et al. (2020) - Machine learning approach for diabetes prediction..."
-[6]: https://doi.org/10.3390/healthcare13010037 "Ahmed et al. (2025) - Machine Learning Algorithm-Based Prediction of Diabetes..."
-[7]: https://myweb.sabanciuniv.edu/rdehkharghani/files/2016/02/The-Morgan-Kaufmann-Series-in-Data-Management-Systems-Jiawei-Han-Micheline-Kamber-Jian-Pei-Data-Mining.-Concepts-and-Techniques-3rd-Edition-Morgan-Kaufmann-2011.pdf "Han, Kamber, & Pei (2012) - Data Mining: Concepts and Techniques"
+
 
 Diabetes mellitus adalah penyakit metabolik kronis yang ditandai oleh kadar gula darah tinggi (hiperglikemia), baik karena pankreas tidak menghasilkan cukup insulin, atau karena tubuh tidak dapat secara efektif menggunakan insulin yang dihasilkannya. Penyakit ini merupakan masalah kesehatan masyarakat global yang signifikan [1]. Komplikasi jangka panjang akibat diabetes sangat serius, meliputi penyakit jantung, stroke, gagal ginjal, kebutaan, dan amputasi kaki, jika tidak didiagnosis dan ditangani secara tepat waktu [[1]](https://www.who.int/news-room/fact-sheets/detail/diabetes)[2] . Organisasi Kesehatan Dunia (WHO) memperkirakan bahwa pada tahun 2014, sekitar 422 juta orang dewasa hidup dengan diabetes, dengan tren peningkatan yang berkelanjutan [2]. Studi terbaru bahkan menunjukkan bahwa satu dari setiap dua penderita diabetes mungkin tidak terdiagnosis, menggarisbawahi urgensi diagnosis dini [3].
 
