@@ -73,7 +73,7 @@ EDA dilakukan untuk memahami distribusi, pola, dan hubungan antar variabel dalam
 Analisis univariat berfokus pada setiap fitur secara individual menggunakan statistik deskriptif dan histogram.
 
 * **Statistik Deskriptif**:
-* Berikut adalah tabel Markdown dari gambar yang Anda berikan:
+  Berikut adalah tabel Markdown dari gambar yang Anda berikan:
 
 | Statistik        | Pregnancies | Glucose    | BloodPressure | SkinThickness | Insulin    | BMI        | DiabetesPedigreeFunction | Age        | Outcome    |
 | :--------------- | :---------- | :--------- | :------------ | :------------ | :--------- | :--------- | :----------------------- | :--------- | :--------- |
@@ -85,6 +85,7 @@ Analisis univariat berfokus pada setiap fitur secara individual menggunakan stat
 | **50%** | 3.000000    | 117.000000 | 72.000000     | 23.000000     | 30.500000  | 32.000000  | 0.372500                 | 29.000000  | 0.000000   |
 | **75%** | 6.000000    | 140.250000 | 80.000000     | 32.000000     | 127.250000 | 36.600000  | 0.626250                 | 41.000000  | 1.000000   |
 | **max** | 17.000000   | 199.000000 | 122.000000    | 99.000000     | 846.000000 | 67.100000  | 2.420000                 | 81.000000  | 1.000000   |
+
     * **Pregnancies**: Rata-rata 3.85, dengan nilai minimum 0 dan maksimum 17. Nilai 0 mungkin mengindikasikan data tidak valid atau pasien belum pernah hamil.
     * **Glucose**: Rata-rata 120.89, dengan nilai minimum 0 dan maksimum 199. Terdapat kemungkinan *outlier* atau nilai tidak valid (khususnya nilai 0).
     * **BloodPressure**: Rata-rata 69.11, dengan nilai minimum 0 dan maksimum 122. Nilai 0 mengindikasikan kemungkinan data tidak valid.
