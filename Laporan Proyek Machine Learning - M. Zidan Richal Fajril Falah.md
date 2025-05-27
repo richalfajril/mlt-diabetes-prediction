@@ -592,7 +592,7 @@ Secara keseluruhan, model AdaBoost menunjukkan kinerja yang sangat menjanjikan d
 
 [2] American Diabetes Association. (2020). *Statistics About Diabetes*. Retrieved from [https://diabetes.org/about-diabetes/statistics/about-diabetes](https://diabetes.org/about-diabetes/statistics/about-diabetes)
 
-[3] Reza, M. S., Amin, R., Yasmin, R., Kulsum, W., & Ruhi, S. (2024). Improving diabetes disease patients classification using stacking ensemble method with PIMA and local healthcare data. *Heliyon*, *10*(7), e24536. [https://doi.org/10.1016/j.heliyon.2024.e24536](https://www.google.com/search?q=https://doi.org/10.1016/j.heliyon.2024.e24536)
+[3] Reza, M. S., Amin, R., Yasmin, R., Kulsum, W., & Ruhi, S. (2024). Improving diabetes disease patients classification using stacking ensemble method with PIMA and local healthcare data. *Heliyon*, *10*(7), e24536. [https://doi.org/10.1016/j.heliyon.2024.e24536](https://doi.org/10.1016/j.heliyon.2024.e24536)
 
 [4] International Diabetes Federation. (2021). *IDF Diabetes Atlas, 10th Edition*. Brussels, Belgium: International Diabetes Federation. [https://diabetesatlas.org/](https://diabetesatlas.org/)
 
