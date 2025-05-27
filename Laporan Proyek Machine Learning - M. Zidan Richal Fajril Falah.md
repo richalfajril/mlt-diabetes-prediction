@@ -226,7 +226,7 @@ Berdasarkan hasil EDA, beberapa potensi masalah teridentifikasi:
 
 Tentu, saya akan menjelaskan bagian "Data Preparation" secara rinci namun singkat, termasuk alasan mengapa setiap tahapan diperlukan, dan memastikan angka-angka sesuai dengan *notebook*.
 
-## Data Preparation**
+## Data Preparation
 
 Pada tahap ini, data dipersiapkan agar siap digunakan untuk pemodelan *machine learning*.
 
@@ -531,11 +531,11 @@ print(pd.Series(y_train_smote).value_counts()) # Output: 0    400, 1    400
 ```
 **Alasan:** Dataset memiliki ketidakseimbangan kelas pada variabel target (`Outcome`), di mana kelas non-diabetes (0) lebih banyak daripada kelas diabetes (1). Ketidakseimbangan ini dapat menyebabkan model cenderung memprediksi kelas mayoritas dan kurang akurat dalam memprediksi kelas minoritas. SMOTE membantu memperluas ruang keputusan untuk kelas minoritas tanpa hanya menduplikasi sampel yang sudah ada, sehingga meningkatkan kinerja model dalam mengidentifikasi kelas minoritas. Ini menunjukkan bahwa SMOTE berhasil menyeimbangkan jumlah sampel untuk kedua kelas di data pelatihan.
 
-## **Modeling**
+## Modeling
 
 Pada tahap ini, model *machine learning* dibangun dan dilatih untuk memprediksi penyakit diabetes berdasarkan data yang telah diproses.
 
-### 3.1 Model Selection
+### 1. Model Selection
 
 Beberapa algoritma *machine learning* klasifikasi berbasis pohon (*tree-based*) dan *ensemble* dipilih untuk dievaluasi:
 
@@ -579,7 +579,7 @@ def base_model():
 models = base_model()
 ```
 
-### 3.2 Model Training
+### 2. Model Training
 
 Setiap model dilatih menggunakan data latih yang sudah diseimbangkan dengan SMOTE (`X_train_smote`, `y_train_smote`). Setelah pelatihan, akurasi awal dihitung pada data uji (`X_test`).
 
@@ -606,7 +606,7 @@ Hasil akurasi awal dari model-model dasar (sebelum *tuning*) adalah:
 * Accuracy for LightGBM: **0.8636**
 * Accuracy for XGBoost: **0.8571**
 
-### 3.3 Hyperparameter Tuning
+### 3. Hyperparameter Tuning
 
 *Hyperparameter tuning* dilakukan menggunakan **Grid Search with Cross-Validation (cv=5)** untuk menemukan kombinasi *hyperparameter* terbaik bagi setiap model.
 
@@ -731,7 +731,7 @@ Hasil ringkasan *tuning* menunjukkan performa model setelah optimalisasi *hyperp
 | XGBoost           | {'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}                                | 0.9315        | 0.8571        |
 
 
-### 3.4 Memilih Best Model untuk Dievaluasi
+### 4. Memilih Best Model untuk Dievaluasi
 
 Model terbaik dipilih berdasarkan `Test Accuracy`.
 ```python
@@ -754,11 +754,11 @@ Dari hasil *tuning summary*, **AdaBoost** memiliki `Test Accuracy` tertinggi seb
 **Alasan Memilih Model Terbaik:**
 Model **AdaBoost Classifier** dipilih sebagai model terbaik karena menunjukkan `Test Accuracy` tertinggi yaitu **0.9026** setelah proses *hyperparameter tuning*. Ini menunjukkan bahwa AdaBoost, dengan kemampuannya berfokus pada sampel yang sulit diklasifikasikan, efektif dalam menggeneralisasi pola data diabetes yang telah diproses dan diseimbangkan.
 
-## **4. Model Evaluation**
+## Model Evaluation
 
 Setelah model terbaik dipilih, tahap selanjutnya adalah mengevaluasi kinerjanya secara mendalam pada data uji yang belum pernah dilihat. Evaluasi ini menggunakan metrik yang relevan untuk masalah klasifikasi biner, khususnya dengan mempertimbangkan ketidakseimbangan kelas.
 
-### 4.1 Membuat Prediksi dengan Model Terbaik
+### 1. Membuat Prediksi dengan Model Terbaik
 
 Model terbaik yang terpilih adalah **AdaBoost Classifier**. Prediksi dilakukan pada data uji (`X_test`) menggunakan model ini. Probabilitas kelas positif (`y_pred_proba`) juga diperoleh untuk perhitungan ROC AUC.
 
@@ -777,7 +777,7 @@ else:
 print(f"Prediksi dengan {best_model_name} telah dibuat.")
 ```
 
-### 4.2 Akurasi dan Confusion Matrix untuk final_model (AdaBoost)
+### 2. Akurasi dan Confusion Matrix untuk final_model (AdaBoost)
 
 #### Penjelasan Metrik:
 
@@ -834,7 +834,7 @@ Dari *Confusion Matrix*, kita bisa menguraikan:
 * **False Negative (FN)**: **8** (Pasien diabetes diprediksi tidak diabetes)
 * **True Positive (TP)**: **47** (Pasien diabetes diprediksi diabetes)
 
-### 4.3 Laporan Klasifikasi (Classification Report) untuk final_model (AdaBoost)
+### 3. Laporan Klasifikasi (Classification Report) untuk final_model (AdaBoost)
 
 #### Penjelasan Metrik:
 
@@ -888,7 +888,7 @@ Dari Laporan Klasifikasi:
 
 Untuk konteks masalah prediksi diabetes, *Recall* untuk kelas 'Diabetes (1)' sangat penting. Nilai *Recall* **0.85** berarti model berhasil mengidentifikasi 85% dari semua pasien yang sebenarnya menderita diabetes, yang merupakan hasil yang baik untuk mengurangi *False Negative* (pasien diabetes yang tidak terdeteksi).
 
-### 4.4 ROC AUC Score dan Kurva ROC untuk final_model (AdaBoost)
+### 4. ROC AUC Score dan Kurva ROC untuk final_model (AdaBoost)
 
 #### Penjelasan Metrik:
 
