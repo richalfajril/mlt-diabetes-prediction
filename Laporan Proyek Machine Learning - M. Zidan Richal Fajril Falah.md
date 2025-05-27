@@ -399,7 +399,7 @@ for feature in zero_features:
 
 **Alasan:** *Outliers* dapat memengaruhi kinerja model secara signifikan karena model cenderung terlalu sensitif terhadap nilai ekstrem. Distribusi data yang miring dapat melanggar asumsi beberapa algoritma *machine learning*. *Capping* membantu mengurangi dampak *outlier* tanpa menghapus data, sehingga mempertahankan informasi penting.
 
-### 2 Feature Engineering
+### 2. Feature Engineering
 
 **Proses:** Menciptakan fitur-fitur baru dari fitur-fitur yang sudah ada.
 a.  **Glucose Insulin Ratio:** Fitur baru ini dihitung sebagai rasio antara kadar `Glucose` dan `Insulin`.
@@ -412,6 +412,7 @@ b.  **Binning Fitur Numerik:** Fitur `Glucose`, `Insulin`, `BloodPressure`, `BMI
     * `BloodPressure_Group`: Kategorinya adalah 'Rendah', 'Normal', 'Pra-Hipertensi', 'Hipertensi'.
     * `BMI_Group`: Kategorinya adalah 'Kurus', 'Normal', 'Gemuk', 'Obesitas'.
     * `Age_Group`: Kategorinya adalah 'Muda', 'Dewasa', 'Tua'.
+    
     ```python
     # Fungsi binning
     def bin_glucose(glucose):
@@ -473,7 +474,7 @@ df_encoded.head()
 
 **Alasan:** Sebagian besar algoritma *machine learning* memerlukan input data dalam bentuk numerik. One-Hot Encoding menciptakan kolom biner untuk setiap kategori, memungkinkan model untuk memproses informasi kategorikal tanpa mengasumsikan urutan atau hubungan ordinal.
 
-### 2.4 Data Splitting
+### 4. Data Splitting
 
 **Proses:** Dataset dibagi menjadi data latih (*training set*) dan data uji (*testing set*). `X` adalah fitur (kolom tanpa `Outcome`) dan `y` adalah variabel target (`Outcome`). Data dibagi dengan `test_size=0.2` (20% untuk pengujian) dan `random_state=42`.
 ```python
@@ -491,7 +492,7 @@ print("Ukuran y_test:", y_test.shape)   # Output: Ukuran y_test: (154,)
 ```
 **Alasan:** Membagi data menjadi *training* dan *testing* set sangat penting untuk mengevaluasi kinerja model secara objektif pada data yang belum pernah dilihat. Hal ini mencegah *data leakage* dan memberikan estimasi yang realistis tentang bagaimana model akan bekerja pada data baru.
 
-### 2.5 Normalisasi Data (Data Scaling)
+### 5. Normalisasi Data (Data Scaling)
 
 **Proses:** Fitur-fitur numerik (`Pregnancies`, `Glucose`, `Insulin`, `BMI`, `DiabetesPedigreeFunction`, `Age`, `Glucose_Insulin_Ratio`) diskalakan menggunakan `StandardScaler`. `scaler` difit hanya pada data latih (`X_train`) dan kemudian digunakan untuk mentransformasi baik `X_train` maupun `X_test`.
 ```python
@@ -510,7 +511,7 @@ X_test[numerical_cols] = scaler.transform(X_test[numerical_cols])
 ```
 **Alasan:** Banyak algoritma *machine learning* sensitif terhadap skala fitur. Jika fitur memiliki rentang nilai yang sangat berbeda, fitur dengan rentang besar dapat mendominasi proses pembelajaran. `StandardScaler` menghasilkan data dengan *mean* 0 dan standar deviasi 1, memastikan semua fitur berkontribusi secara proporsional.
 
-### 2.6 Data Balancing (pada data training)
+### 6. Data Balancing (pada data training)
 
 **Proses:** Teknik **SMOTE** (Synthetic Minority Over-sampling Technique) diterapkan pada data latih (`X_train`, `y_train`) untuk menghasilkan sampel sintetis baru bagi kelas minoritas. Hasilnya adalah `X_train_smote` dan `y_train_smote`.
 ```python
