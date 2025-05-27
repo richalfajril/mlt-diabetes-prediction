@@ -115,6 +115,8 @@ Analisis multivariat mengeksplorasi hubungan antar fitur menggunakan Pair Plot d
     * **Pregnancies dan Age**: Terdapat korelasi positif yang wajar.
 
 * **Correlation Matrix**:
+  ![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Corr%20Matrix%201.png)
+  
     * **Korelasi terhadap Variabel Target (Outcome)**:
         * **Glucose (0.47)**: Memiliki korelasi tertinggi, sangat berperan dalam prediksi diabetes.
         * **BMI (0.29)**: Korelasi sedang, kelebihan berat badan berkontribusi terhadap risiko diabetes.
