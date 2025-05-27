@@ -221,6 +221,14 @@ for col in num_cols:
     replace_with_thresholds(df_imputed, col)
 ```
 
+Sebelum Outliers Handling:
+
+![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Boxplot%201.png)
+
+Sebelum Outliers Handling:
+
+![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Boxplot%202.png)
+
 ### 2. Feature Engineering
 
 Tahap ini bertujuan untuk menciptakan fitur-fitur baru dari fitur yang sudah ada guna memberikan informasi tambahan yang mungkin dapat meningkatkan kinerja model.
