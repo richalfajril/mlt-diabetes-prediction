@@ -438,7 +438,7 @@ for name, model in models.items():
 
 ### 4. Memilih Best Model untuk Dievaluasi
 
-Model terbaik dipilih berdasarkan `Test Accuracy`.
+Model terbaik dipilih berdasarkan metrik **Test Accuracy** karena ini merepresentasikan kinerja model pada data yang belum pernah dilihat setelah *hyperparameter tuning*.
 ```python
 # Urutkan berdasarkan Test Accuracy untuk menentukan model terbaik
 best_model_summary = tuning_df.sort_values(by='Test Accuracy', ascending=False)
@@ -452,12 +452,22 @@ final_model = best_models[best_model_name]
 
 print(f"\n🎉 The best model selected is: {best_model_name}")
 ```
-[Tabel Best Model based on Test Accuracy]
+**Ringkasan Model Terbaik Berdasarkan Akurasi Uji:**
 
-Dari hasil *tuning summary*, **AdaBoost** memiliki `Test Accuracy` tertinggi sebesar **0.9026**, menjadikannya model terbaik yang terpilih untuk evaluasi lebih lanjut.
+| Model             | Best Parameters                                                | Best CV Score | Test Accuracy |
+| :---------------- | :------------------------------------------------------------- | :------------ | :------------ |
+| AdaBoost          | `{'learning_rate': 1.0, 'n_estimators': 200}`                  | 0.9028        | 0.9026        |
+| Gradient Boosting | `{'learning_rate': 0.2, 'max_depth': 7, 'n_estimators': 200, 'subsample': 0.8}` | 0.9290        | 0.8701        |
+| Decision Tree     | `{'max_depth': 15, 'min_samples_leaf': 2, 'min_samples_split': 2}` | 0.8854        | 0.8701        |
+| Random Forest     | `{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}` | 0.9116        | 0.8636        |
+| LightGBM          | `{'colsample_bytree': 1, 'learning_rate': 0.1, 'max_depth': -1, 'n_estimators': 500, 'num_leaves': 31, 'subsample': 0.8}` | 0.9302        | 0.8636        |
+| Extra Trees       | `{'max_depth': None, 'min_samples_split': 5, 'n_estimators': 300}` | 0.9016        | 0.8571        |
+| XGBoost           | `{'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}` | 0.9315        | 0.8571        |
 
-**Alasan Memilih Model Terbaik:**
-Model **AdaBoost Classifier** dipilih sebagai model terbaik karena menunjukkan `Test Accuracy` tertinggi yaitu **0.9026** setelah proses *hyperparameter tuning*. Ini menunjukkan bahwa AdaBoost, dengan kemampuannya berfokus pada sampel yang sulit diklasifikasikan, efektif dalam menggeneralisasi pola data diabetes yang telah diproses dan diseimbangkan.
+**Model terbaik yang terpilih adalah: AdaBoost.**
+
+**Alasan Pemilihan AdaBoost sebagai Model Terbaik:**
+AdaBoost menunjukkan akurasi tertinggi pada data uji (`Test Accuracy: 0.9026`) dibandingkan dengan model-model lain setelah proses *hyperparameter tuning*. Meskipun beberapa model lain (seperti LightGBM dan XGBoost) memiliki *Best CV Score* yang sedikit lebih tinggi, *Test Accuracy* adalah metrik paling relevan untuk mengevaluasi kinerja model pada data baru. AdaBoost berhasil mempertahankan kinerja generalisasi yang sangat baik pada data yang belum pernah dilihat.
 
 ## Model Evaluation
 
