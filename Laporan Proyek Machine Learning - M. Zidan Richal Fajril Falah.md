@@ -107,6 +107,7 @@ Analisis univariat berfokus pada setiap fitur secara individual menggunakan stat
 Analisis multivariat mengeksplorasi hubungan antar fitur menggunakan Pair Plot dan Correlation Matrix.
 
 * **Pair Plot**:
+    ![Pair Plot 1]([https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Histogram%201.png](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Pair%20Plot%201.png))
     * **Glucose, Age, dan BMI**: Menunjukkan hubungan yang cukup kuat dengan `Outcome` (diabetes), berpotensi menjadi prediktor yang baik.
     * **Insulin dan Glucose**: Terdapat korelasi positif, namun tidak terlalu kuat.
     * **Pregnancies dan Age**: Terdapat korelasi positif yang wajar.
