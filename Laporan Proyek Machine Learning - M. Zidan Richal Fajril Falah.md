@@ -116,13 +116,17 @@ Analisis multivariat mengeksplorasi hubungan antar fitur menggunakan Pair Plot d
 
 ## Data Preparation
 
-Pada tahap ini, data dipersiapkan agar siap digunakan untuk pemodelan *machine learning*.
+Tahap *Data Preparation* adalah langkah krusial dalam proyek ini untuk memastikan data siap digunakan dalam pemodelan *machine learning*. Proses ini melibatkan beberapa teknik penting yang bertujuan untuk mengatasi masalah yang teridentifikasi selama tahap *Data Understanding*, seperti nilai 0 yang tidak realistis, *outlier*, ketidakseimbangan kelas, dan distribusi data yang miring.
 
 ### 1. Data Cleaning
 
-#### a. Pengecekan dan Penanganan Duplikat
+Tahap awal *data preparation* adalah pembersihan data untuk mengatasi inkonsistensi dan nilai yang tidak valid.
 
-**Proses:** Memeriksa dan menghapus data duplikat dalam DataFrame menggunakan `.duplicated()`.
+#### a. Pengecekan dan Penanganan Duplikat
+* **Teknik yang Digunakan**: Pemeriksaan dan penghapusan baris data duplikat menggunakan `df.duplicated()` dan `df.drop_duplicates()`.
+* **Proses**: Dataset diperiksa untuk mengidentifikasi adanya baris-baris data yang sama persis. Jika ditemukan, baris duplikat tersebut akan dihapus untuk menghindari bias dalam model dan memastikan setiap observasi unik. Setelah penghapusan, indeks DataFrame direset.
+* **Alasan**: Data duplikat dapat menyebabkan model mempelajari pola yang salah atau terlalu menekankan pada observasi tertentu, yang pada akhirnya dapat mengurangi generalisasi model. Menghapus duplikat memastikan bahwa setiap observasi berkontribusi secara independen pada proses pembelajaran.
+
 ```python
 # Periksa data duplikat
 num_duplicates = df.duplicated().sum()
@@ -134,20 +138,22 @@ if num_duplicates > 0:
     df.reset_index(drop=True, inplace=True)
     print("Data duplikat telah dihapus.")
 ```
-**Alasan:** Data duplikat dapat menyebabkan model menjadi bias dan *overfitting*. Penghapusan duplikat memastikan setiap observasi unik dan tidak ada pengaruh ganda dari data yang sama. Dalam proyek ini, tidak ditemukan data duplikat.
 
 #### b. Pengecekan dan Penanganan Missing Values
+* **Teknik yang Digunakan**: Pemeriksaan jumlah *missing values* (NaN) menggunakan `df.isnull().sum()`.
+* **Proses**: Dilakukan pengecekan menyeluruh untuk memastikan tidak ada nilai yang hilang (NaN) dalam dataset.
+* **Alasan**: Meskipun pada tahap awal tidak terdeteksi adanya missing values dalam format NaN, langkah ini penting untuk memastikan integritas data sebelum melanjutkan ke penanganan nilai 0 yang tidak realistis.
 
-**Proses:** Memeriksa jumlah *missing values* (NaN) di setiap kolom DataFrame menggunakan `.isnull().sum()`.
 ```python
 # Periksa missing values
 df.isnull().sum()
 ```
-**Alasan:** *Missing values* dapat menyebabkan error pada proses pemodelan atau menghasilkan model yang kurang akurat. Pengecekan ini memastikan tidak ada nilai NaN eksplisit yang perlu ditangani. Pada proyek ini, tidak ditemukan nilai NaN.
 
 #### c. Pengecekan dan Penanganan Zero Values (Nilai 0 tidak realistis)
+* **Teknik yang Digunakan**: Imputasi nilai 0 yang tidak realistis dengan nilai rata-rata (`mean`) berdasarkan grup `Outcome`.
+* **Proses**: Beberapa fitur seperti `Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, dan `BMI` diketahui memiliki nilai 0 yang secara medis tidak realistis. Nilai-nilai 0 ini diganti dengan nilai rata-rata dari fitur tersebut, dikelompokkan berdasarkan `Outcome` (Diabetes atau Tidak Diabetes). Hal ini dilakukan karena nilai rata-rata untuk penderita diabetes mungkin berbeda dari non-penderita.
+* **Alasan**: Nilai 0 pada fitur-fitur tersebut adalah indikasi *missing values* atau *error* data, bukan nilai yang sebenarnya. Membiarkan nilai 0 ini dapat secara signifikan mengganggu statistik deskriptif dan kinerja model karena nilai tersebut tidak merepresentasikan kondisi kesehatan yang sebenarnya. Imputasi dengan mean yang dikelompokkan dapat mempertahankan distribusi data asli sebaik mungkin.
 
-**Proses:** Memeriksa jumlah *zero values* pada fitur-fitur tertentu (`Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, `BMI`). Kemudian, nilai 0 ini diganti dengan nilai rata-rata (*mean*) dari masing-masing fitur yang dikelompokkan berdasarkan `Outcome`. Data yang telah diimputasi disimpan ke `df_imputed`.
 ```python
 # Periksa zero values pada fitur-fitur tertentu
 zero_features = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
@@ -155,270 +161,137 @@ for feature in zero_features:
     num_zeros = (df[feature] == 0).sum()
     print(f"Jumlah nilai 0 tidak realistis pada {feature}: {num_zeros}")
 
-# Ganti nilai 0 dengan mean berdasarkan Outcome
+# Ganti nilai 0 dengan mean berdasarkan grup Outcome
 df['Glucose'] = df['Glucose'].where((df['Glucose'] > 0)).fillna(df.groupby('Outcome')["Glucose"].transform("mean"))
 df['BMI'] = df['BMI'].where((df['BMI'] > 0)).fillna(df.groupby('Outcome')["BMI"].transform("mean"))
 df['BloodPressure'] = df['BloodPressure'].where((df['BloodPressure'] > 0)).fillna(df.groupby('Outcome')["BloodPressure"].transform("mean"))
 df['Insulin'] = df['Insulin'].where((df['Insulin'] > 0)).fillna(df.groupby('Outcome')["Insulin"].transform("mean"))
 df['SkinThickness'] = df['SkinThickness'].where((df['SkinThickness'] > 0)).fillna(df.groupby('Outcome')["SkinThickness"].transform("mean"))
-
-# Simpan ke df_imputed
-df_imputed = df.copy()
-
-# Periksa ulang zero values setelah imputasi
-for feature in zero_features:
-    num_zeros = (df_imputed[feature] == 0).sum()
-    print(f"Jumlah nilai 0 tidak realistis pada {feature}: {num_zeros}")
 ```
-**Alasan:** Beberapa fitur memiliki nilai **0** yang tidak realistis secara medis (misalnya, tekanan darah 0 atau BMI 0). Nilai-nilai ini dianggap sebagai *missing values* dan perlu ditangani karena dapat mengganggu perhitungan statistik dan kinerja model. Penggantian dengan *mean* per grup `Outcome` dipilih untuk mempertahankan distribusi data sebaik mungkin dan memanfaatkan informasi dari variabel target. Setelah proses ini, jumlah nilai 0 yang tidak realistis pada `Glucose` adalah 0, `BloodPressure` adalah 0, `SkinThickness` adalah 0, `Insulin` adalah 0, dan `BMI` adalah 0.
 
 #### d. Penanganan Outliers dan Distribusi Data yang Miring
+* **Teknik yang Digunakan**: *Capping* (Winsorizing) menggunakan metode IQR (Interquartile Range).
+* **Proses**:
+    1. **Identifikasi Outlier**: Menggunakan Boxplot untuk memvisualisasikan outlier pada setiap fitur numerik.
+    2. **Hitung Ambang Batas (Thresholds)**: Menghitung batas bawah dan batas atas ($Q1 - 1.5 \times IQR$) dan ($Q3 + 1.5 \times IQR$) untuk setiap fitur.
+    3. **Capping Outlier**: Nilai-nilai yang berada di luar batas ambang tersebut diganti dengan nilai ambang batas terdekat (nilai batas bawah atau batas atas).
+* **Alasan**: *Outlier* adalah nilai ekstrem yang dapat memengaruhi kinerja model secara signifikan, terutama model yang sensitif terhadap nilai ekstrem (misalnya, regresi linier). *Capping* membantu mengurangi dampak *outlier* tanpa menghapus data, sehingga informasi penting tetap terjaga. Selain itu, *capping* juga dapat membantu mengurangi efek *skewness* pada distribusi data.
 
-**Proses:**
-- **Identifikasi Outlier:** Menggunakan visualisasi Boxplot untuk mendeteksi keberadaan *outlier* pada setiap fitur numerik.
-    ```python
-    # Periksa distribusi variabel menggunakan Boxplot
-    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 9))
-    axes = axes.flatten()
+```python
+# Fungsi untuk menghitung batas bawah dan atas dengan IQR
+def outlier_thresholds(dataframe, col_name, q1=0.25, q3=0.75):
+    quartile1 = dataframe[col_name].quantile(q1)
+    quartile3 = dataframe[col_name].quantile(q3)
+    iqr = quartile3 - quartile1
+    low_limit = quartile1 - 1.5 * iqr
+    up_limit = quartile3 + 1.5 * iqr
+    return low_limit, up_limit
 
-    for i, col in enumerate(df_imputed.drop('Outcome', axis=1).columns):
-        sns.boxplot(df_imputed[col], ax=axes[i], color=sns.color_palette()[i])
-        axes[i].set_title(f'Distribution of {col}')
+# Fungsi untuk mengganti nilai outlier
+def replace_with_thresholds(dataframe, col_name):
+    low_limit, up_limit = outlier_thresholds(dataframe, col_name)
+    dataframe.loc[dataframe[col_name] < low_limit, col_name] = low_limit
+    dataframe.loc[dataframe[col_name] > up_limit, col_name] = up_limit
 
-    for i in range(len(df_imputed.drop('Outcome', axis=1).columns), len(axes)):
-        fig.delaxes(axes[i])
-
-    plt.tight_layout()
-    plt.show()
-    ```
-    [Gambar Visualisasi Boxplot setelah Imputasi]
-
-- **Capping (Winsorizing):** Menggunakan fungsi `outlier_thresholds` (berdasarkan metode IQR) untuk menghitung batas bawah dan batas atas. Kemudian, nilai-nilai *outlier* yang berada di luar batas tersebut diganti dengan nilai ambang batas yang sesuai menggunakan fungsi `replace_with_thresholds`. Proses ini diterapkan pada semua kolom numerik. Data disimpan di `df_capped`.
-    ```python
-    # Fungsi untuk menghitung batas bawah dan atas dengan IQR
-    def outlier_thresholds(dataframe, col_name, q1=0.25, q3=0.75):
-        quartile1 = dataframe[col_name].quantile(q1)
-        quartile3 = dataframe[col_name].quantile(q3)
-        iqr = quartile3 - quartile1
-        low_limit = quartile1 - 1.5 * iqr
-        up_limit = quartile3 + 1.5 * iqr
-        return low_limit, up_limit
-
-    # Fungsi untuk memeriksa apakah kolom memiliki outlier
-    def check_outlier(dataframe, col_name):
-        low_limit, up_limit = outlier_thresholds(dataframe, col_name)
-        return dataframe[(dataframe[col_name] < low_limit) | (dataframe[col_name] > up_limit)].any(axis=None)
-
-    # Fungsi untuk mengganti nilai outlier dan mencetak jumlah yang diganti
-    def replace_with_thresholds(dataframe, col_name):
-        low_limit, up_limit = outlier_thresholds(dataframe, col_name)
-        before = dataframe[col_name].copy()
-
-        # Ganti nilai outlier
-        dataframe.loc[dataframe[col_name] < low_limit, col_name] = low_limit
-        dataframe.loc[dataframe[col_name] > up_limit, col_name] = up_limit
-
-        # Hitung berapa yang diganti
-        after = dataframe[col_name]
-        n_capped = sum(before != after)
-
-        if n_capped > 0:
-            print(f"Kolom '{col_name}': {n_capped} nilai dicapping ke batas bawah/atas.")
-        else:
-            print(f"Kolom '{col_name}': tidak ada nilai yang perlu dicapping.")
-
-    # Salin df_imputed
-    df_capped = df_imputed.copy()
-
-    # Kolom numerik
-    num_cols = df_capped.select_dtypes(include=['int64', 'float64']).columns
-
-    # Proses capping
-    for col in num_cols:
-        if check_outlier(df_capped, col):
-            replace_with_thresholds(df_capped, col)
-        else:
-            print(f"Kolom '{col}': tidak ditemukan outlier.")
-    ```
-    Output yang ditampilkan setelah capping adalah:
-    * Kolom 'Pregnancies': 13 nilai dicapping ke batas bawah/atas.
-    * Kolom 'Glucose': tidak ditemukan outlier.
-    * Kolom 'BloodPressure': tidak ditemukan outlier.
-    * Kolom 'SkinThickness': tidak ditemukan outlier.
-    * Kolom 'Insulin': 14 nilai dicapping ke batas bawah/atas.
-    * Kolom 'BMI': 8 nilai dicapping ke batas bawah/atas.
-    * Kolom 'DiabetesPedigreeFunction': 29 nilai dicapping ke batas bawah/atas.
-    * Kolom 'Age': 20 nilai dicapping ke batas bawah/atas.
-    * Kolom 'Outcome': tidak ditemukan outlier.
-
-- **Pemeriksaan Ulang:** Visualisasi boxplot dan histogram diperiksa kembali untuk memastikan *outlier* telah ditangani dan distribusi data terlihat lebih baik. Statistik deskriptif juga ditampilkan kembali.
-    ```python
-    # Periksa ulang distribusi variabel menggunakan Boxplot
-    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 9))
-    axes = axes.flatten()
-
-    for i, col in enumerate(df_capped.drop('Outcome', axis=1).columns):
-        sns.boxplot(df_capped[col], ax=axes[i], color=sns.color_palette()[i])
-        axes[i].set_title(f'Distribution of {col}')
-
-    for i in range(len(df_capped.drop('Outcome', axis=1).columns), len(axes)):
-        fig.delaxes(axes[i])
-
-    plt.tight_layout()
-    plt.show()
-
-    # Cek ulang distribusi variabel menggunakan Histogram
-    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 9))
-    axes = axes.flatten()
-
-    for i, col in enumerate(df_capped.drop('Outcome', axis=1).columns):
-        sns.histplot(df_capped[col], ax=axes[i], kde=True, color=sns.color_palette()[i])
-        axes[i].set_title(f'Distribution of {col}')
-
-    for i in range(len(df_capped.drop('Outcome', axis=1).columns), len(axes)):
-        fig.delaxes(axes[i])
-
-    plt.tight_layout()
-    plt.show()
-
-    # Cek Ulang Statistik Deskriptif
-    df_capped.describe()
-    ```
-    [Gambar Visualisasi Boxplot setelah Capping]
-    [Gambar Visualisasi Histogram setelah Capping]
-    [Tabel Statistik Deskriptif setelah Capping]
-
-**Alasan:** *Outliers* dapat memengaruhi kinerja model secara signifikan karena model cenderung terlalu sensitif terhadap nilai ekstrem. Distribusi data yang miring dapat melanggar asumsi beberapa algoritma *machine learning*. *Capping* membantu mengurangi dampak *outlier* tanpa menghapus data, sehingga mempertahankan informasi penting.
+# Terapkan capping ke kolom numerik
+num_cols = df_imputed.select_dtypes(include=['int64', 'float64']).columns
+for col in num_cols:
+    replace_with_thresholds(df_imputed, col)
+```
 
 ### 2. Feature Engineering
 
-**Proses:** Menciptakan fitur-fitur baru dari fitur-fitur yang sudah ada.
-a.  **Glucose Insulin Ratio:** Fitur baru ini dihitung sebagai rasio antara kadar `Glucose` dan `Insulin`.
-    ```python
-    df_capped['Glucose_Insulin_Ratio'] = df_capped['Glucose'] / df_capped['Insulin']
-    ```
-b.  **Binning Fitur Numerik:** Fitur `Glucose`, `Insulin`, `BloodPressure`, `BMI`, dan `Age` dikelompokkan ke dalam kategori berdasarkan referensi klinis atau distribusi data.
-    * `Glucose_Group`: Kategorinya adalah 'Rendah', 'Normal', 'Pradiabetes', 'Diabetes'.
-    * `Insulin_Group`: Kategorinya adalah 'Rendah', 'Normal', 'Tinggi'.
-    * `BloodPressure_Group`: Kategorinya adalah 'Rendah', 'Normal', 'Pra-Hipertensi', 'Hipertensi'.
-    * `BMI_Group`: Kategorinya adalah 'Kurus', 'Normal', 'Gemuk', 'Obesitas'.
-    * `Age_Group`: Kategorinya adalah 'Muda', 'Dewasa', 'Tua'.
-    
-    ```python
-    # Fungsi binning
-    def bin_glucose(glucose):
-        if glucose < 70: return 'Rendah'
-        elif 70 <= glucose <= 99: return 'Normal'
-        elif 100 <= glucose <= 125: return 'Pradiabetes'
-        else: return 'Diabetes'
-    df_capped['Glucose_Group'] = df_capped['Glucose'].apply(bin_glucose)
+Tahap ini bertujuan untuk menciptakan fitur-fitur baru dari fitur yang sudah ada guna memberikan informasi tambahan yang mungkin dapat meningkatkan kinerja model.
 
-    def bin_insulin(insulin):
-        if insulin < 2: return 'Rendah'
-        elif 2 <= insulin <= 24: return 'Normal'
-        else: return 'Tinggi'
-    df_capped['Insulin_Group'] = df_capped['Insulin'].apply(bin_insulin)
+#### a. Glucose Insulin Ratio
+* **Teknik yang Digunakan**: Pembuatan fitur rasio.
+* **Proses**: Fitur baru `Glucose_Insulin_Ratio` dibuat dengan membagi nilai `Glucose` dengan nilai `Insulin`.
+* **Alasan**: Rasio ini dapat memberikan wawasan mengenai sensitivitas insulin seseorang, yang merupakan faktor penting dalam diagnosis diabetes.
 
-    def bin_blood_pressure(bp):
-        if bp < 60: return 'Rendah'
-        elif 60 <= bp <= 79: return 'Normal'
-        elif 80 <= bp <= 89: return 'Pra-Hipertensi'
-        else: return 'Hipertensi'
-    df_capped['BloodPressure_Group'] = df_capped['BloodPressure'].apply(bin_blood_pressure)
+```python
+df_capped['Glucose_Insulin_Ratio'] = df_capped['Glucose'] / df_capped['Insulin']
+```
 
-    def bin_bmi(bmi):
-        if bmi < 18.5: return 'Kurus'
-        elif 18.5 <= bmi <= 24.9: return 'Normal'
-        elif 25.0 <= bmi <= 29.9: return 'Gemuk'
-        else: return 'Obesitas'
-    df_capped['BMI_Group'] = df_capped['BMI'].apply(bin_bmi)
+#### b. Binning Fitur Numerik
+* **Teknik yang Digunakan**: Pengelompokan (binning) fitur numerik ke dalam kategori diskrit.
+* **Proses**: Fitur-fitur numerik seperti `Glucose`, `Insulin`, `BloodPressure`, `BMI`, dan `Age` dikelompokkan ke dalam kategori-kategori berdasarkan referensi klinis atau distribusi data (misalnya, 'Rendah', 'Normal', 'Pradiabetes', 'Diabetes' untuk Glukosa; 'Muda', 'Dewasa', 'Tua' untuk Age).
+* **Alasan**: Binning dapat mengubah hubungan non-linear menjadi linear dan mengurangi sensitivitas terhadap *outlier*. Ini juga dapat membantu model menangkap pola yang lebih general pada data.
 
-    def bin_age(age):
-        if age <= 24: return "Muda"
-        elif age <= 41: return "Dewasa"
-        else: return "Tua"
-    df_capped['Age_Group'] = df_capped['Age'].apply(bin_age)
+```python
+# Contoh binning Glucose
+def bin_glucose(glucose):
+    if glucose < 70:
+        return 'Rendah'
+    elif 70 <= glucose <= 99:
+        return 'Normal'
+    elif 100 <= glucose <= 125:
+        return 'Pradiabetes'
+    else:
+        return 'Diabetes'
+df_capped['Glucose_Group'] = df_capped['Glucose'].apply(bin_glucose)
 
-    df_capped.head()
-    ```
-    [Gambar Tampilan Awal DataFrame setelah Feature Engineering]
-
-**Alasan:** *Feature Engineering* bertujuan untuk memberikan informasi tambahan kepada model yang mungkin tidak terlihat dari fitur asli. `Glucose_Insulin_Ratio` dapat memberikan wawasan tentang sensitivitas insulin. *Binning* dapat membantu mengubah hubungan non-linear menjadi linear dan mengurangi sensitivitas terhadap *outlier*, serta menambahkan konteks klinis.
+# Binning untuk fitur lain seperti Insulin, BloodPressure, BMI, Age juga dilakukan dengan logika serupa.
+```
 
 ### 3. Data Encoding
 
-**Proses:** Mengubah fitur-fitur kategorikal yang dibuat pada tahap *Feature Engineering* menjadi format numerik menggunakan **One-Hot Encoding**. Kolom-kolom kategorikal (`Glucose_Group`, `Insulin_Group`, `BloodPressure_Group`, `BMI_Group`, `Age_Group`) di-encode menggunakan `OneHotEncoder`. Hasilnya kemudian digabungkan dengan DataFrame asli yang kolom kategorikalnya telah dihapus, menghasilkan `df_encoded`.
+* **Teknik yang Digunakan**: *One-Hot Encoding*.
+* **Proses**: Fitur-fitur kategorikal baru yang dihasilkan dari proses *binning* (`Glucose_Group`, `Insulin_Group`, `BloodPressure_Group`, `BMI_Group`, `Age_Group`) diubah menjadi format numerik menggunakan `OneHotEncoder`. Setiap kategori unik akan menjadi kolom biner baru (0 atau 1).
+* **Alasan**: Sebagian besar algoritma *machine learning* memerlukan input data dalam bentuk numerik. *One-Hot Encoding* adalah metode yang efektif untuk mengubah fitur kategorikal menjadi representasi numerik tanpa menyiratkan hubungan ordinal antar kategori.
+
 ```python
-# One-Hot Encoding df_capped
+from sklearn.preprocessing import OneHotEncoder
 categorical_cols = ['Glucose_Group', 'Insulin_Group', 'BloodPressure_Group', 'BMI_Group', 'Age_Group']
 encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
-encoder.fit(df_capped[categorical_cols])
-
 encoded_data = encoder.transform(df_capped[categorical_cols])
 encoded_df = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(categorical_cols), index=df_capped.index)
 df_encoded = df_capped.drop(columns=categorical_cols).join(encoded_df)
-
-# Menampilkan 5 data teratas setelah encoding
-df_encoded.head()
 ```
-[Gambar Tampilan Awal DataFrame setelah Encoding]
-
-**Alasan:** Sebagian besar algoritma *machine learning* memerlukan input data dalam bentuk numerik. One-Hot Encoding menciptakan kolom biner untuk setiap kategori, memungkinkan model untuk memproses informasi kategorikal tanpa mengasumsikan urutan atau hubungan ordinal.
 
 ### 4. Data Splitting
 
-**Proses:** Dataset dibagi menjadi data latih (*training set*) dan data uji (*testing set*). `X` adalah fitur (kolom tanpa `Outcome`) dan `y` adalah variabel target (`Outcome`). Data dibagi dengan `test_size=0.2` (20% untuk pengujian) dan `random_state=42`.
+* **Teknik yang Digunakan**: Pembagian dataset menjadi data latih (*training set*) dan data uji (*testing set*) menggunakan `train_test_split`.
+* **Proses**: Dataset dibagi menjadi 80% untuk data latih dan 20% untuk data uji, dengan `random_state` yang tetap untuk reproduktifitas. Fitur (`X`) dan variabel target (`y`) dipisahkan terlebih dahulu.
+* **Alasan**: Pemisahan data ini esensial untuk mengevaluasi kinerja model secara objektif. Model dilatih hanya pada data latih, dan kemudian dievaluasi pada data uji yang belum pernah dilihat sebelumnya untuk mengukur kemampuan generalisasinya.
+
 ```python
-# Data Splitting
+from sklearn.model_selection import train_test_split
 X = df_encoded.drop('Outcome', axis=1)
 y = df_encoded['Outcome']
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Menampilkan ukuran masing-masing set
-print("Ukuran X_train:", X_train.shape) # Output: Ukuran X_train: (614, 21)
-print("Ukuran X_test:", X_test.shape)   # Output: Ukuran X_test: (154, 21)
-print("Ukuran y_train:", y_train.shape) # Output: Ukuran y_train: (614,)
-print("Ukuran y_test:", y_test.shape)   # Output: Ukuran y_test: (154,)
 ```
-**Alasan:** Membagi data menjadi *training* dan *testing* set sangat penting untuk mengevaluasi kinerja model secara objektif pada data yang belum pernah dilihat. Hal ini mencegah *data leakage* dan memberikan estimasi yang realistis tentang bagaimana model akan bekerja pada data baru.
 
 ### 5. Normalisasi Data (Data Scaling)
 
-**Proses:** Fitur-fitur numerik (`Pregnancies`, `Glucose`, `Insulin`, `BMI`, `DiabetesPedigreeFunction`, `Age`, `Glucose_Insulin_Ratio`) diskalakan menggunakan `StandardScaler`. `scaler` difit hanya pada data latih (`X_train`) dan kemudian digunakan untuk mentransformasi baik `X_train` maupun `X_test`.
+* **Teknik yang Digunakan**: `StandardScaler`.
+* **Proses**: Fitur-fitur numerik (kecuali fitur hasil *one-hot encoding*) pada data latih dan data uji diskalakan menggunakan `StandardScaler`. `StandardScaler` mengubah data sehingga memiliki rata-rata 0 dan standar deviasi 1. `Scaler` hanya di-*fit* pada data latih untuk menghindari *data leakage*.
+* **Alasan**: Banyak algoritma *machine learning* sensitif terhadap skala fitur. Jika fitur memiliki rentang nilai yang sangat berbeda, fitur dengan rentang yang lebih besar dapat mendominasi proses pembelajaran. Normalisasi memastikan semua fitur berkontribusi secara proporsional dan dapat meningkatkan konvergensi serta kinerja model.
+
 ```python
-# Inisialisasi StandardScaler
+from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
-
-# Tentukan kolom numerik yang akan diskalakan
 numerical_cols = ['Pregnancies', 'Glucose', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Glucose_Insulin_Ratio']
-
-# Fit scaler hanya pada data latih
 scaler.fit(X_train[numerical_cols])
-
-# Transform data latih dan data uji
 X_train[numerical_cols] = scaler.transform(X_train[numerical_cols])
 X_test[numerical_cols] = scaler.transform(X_test[numerical_cols])
 ```
-**Alasan:** Banyak algoritma *machine learning* sensitif terhadap skala fitur. Jika fitur memiliki rentang nilai yang sangat berbeda, fitur dengan rentang besar dapat mendominasi proses pembelajaran. `StandardScaler` menghasilkan data dengan *mean* 0 dan standar deviasi 1, memastikan semua fitur berkontribusi secara proporsional.
 
 ### 6. Data Balancing (pada data training)
 
-**Proses:** Teknik **SMOTE** (Synthetic Minority Over-sampling Technique) diterapkan pada data latih (`X_train`, `y_train`) untuk menghasilkan sampel sintetis baru bagi kelas minoritas. Hasilnya adalah `X_train_smote` dan `y_train_smote`.
-```python
-# Inisialisasi objek SMOTE
-smote = SMOTE(random_state=42)
+* **Teknik yang Digunakan**: SMOTE (Synthetic Minority Over-sampling Technique).
+* **Proses**: SMOTE diterapkan pada data latih (`X_train`, `y_train`) untuk mengatasi ketidakseimbangan kelas. SMOTE menghasilkan sampel sintetis baru untuk kelas minoritas (`Outcome = 1`) berdasarkan sampel terdekatnya, sehingga jumlah sampel di kelas minoritas menjadi seimbang dengan kelas mayoritas.
+* **Alasan**: Ketidakseimbangan kelas dapat menyebabkan model cenderung memprediksi kelas mayoritas dan kurang akurat dalam memprediksi kelas minoritas, yang seringkali merupakan kelas yang lebih penting dalam kasus medis seperti diabetes. SMOTE membantu model belajar pola dari kelas minoritas dengan lebih baik, sehingga meningkatkan performa model secara keseluruhan, terutama pada metrik seperti *recall* dan F1-score untuk kelas minoritas.
 
-# Terapkan SMOTE pada data training
+```python
+from imblearn.over_sampling import SMOTE
+smote = SMOTE(random_state=42)
 X_train_smote, y_train_smote = smote.fit_resample(X_train, y_train)
 
-# Menampilkan jumlah data sebelum dan sesudah SMOTE
 print("Jumlah data sebelum SMOTE:")
-print(y_train.value_counts()) # Output: 0    400, 1    214
+print(y_train.value_counts())
 print("\nJumlah data sesudah SMOTE:")
-print(pd.Series(y_train_smote).value_counts()) # Output: 0    400, 1    400
+print(pd.Series(y_train_smote).value_counts())
 ```
-**Alasan:** Dataset memiliki ketidakseimbangan kelas pada variabel target (`Outcome`), di mana kelas non-diabetes (0) lebih banyak daripada kelas diabetes (1). Ketidakseimbangan ini dapat menyebabkan model cenderung memprediksi kelas mayoritas dan kurang akurat dalam memprediksi kelas minoritas. SMOTE membantu memperluas ruang keputusan untuk kelas minoritas tanpa hanya menduplikasi sampel yang sudah ada, sehingga meningkatkan kinerja model dalam mengidentifikasi kelas minoritas. Ini menunjukkan bahwa SMOTE berhasil menyeimbangkan jumlah sampel untuk kedua kelas di data pelatihan.
 
 ## Modeling
 
