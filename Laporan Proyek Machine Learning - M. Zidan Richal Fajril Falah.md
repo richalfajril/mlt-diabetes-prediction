@@ -44,184 +44,75 @@ Untuk mencapai tujuan yang telah ditetapkan, proyek ini akan mengimplementasikan
 
 ## Data Understanding
 
-Proyek ini menggunakan dataset **Pima Indians Diabetes Database** yang tersedia di Kaggle: [https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database). Dataset ini merupakan kumpulan catatan medis diagnostik yang spesifik untuk wanita keturunan Pima Indian, berusia minimal 21 tahun. Tujuan utama dari dataset ini adalah untuk memprediksi apakah seorang pasien menderita diabetes (variabel `Outcome`) berdasarkan beberapa pengukuran diagnostik.
+Bagian ini menjelaskan informasi mengenai data yang digunakan dalam proyek prediksi diabetes. Proyek ini menggunakan dataset Pima Indians Diabetes Database.
 
-Dataset ini terdiri dari 768 entri dengan 9 kolom (8 fitur prediktor dan 1 variabel target).
+**Sumber Data:**
+Dataset ini dapat diunduh dari Kaggle melalui tautan berikut: [https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database)
 
-### Variabel-variabel pada Pima Indians Diabetes Database adalah sebagai berikut:
+### Informasi Umum Dataset
+Dataset ini berisi informasi tentang karakteristik kesehatan pasien yang digunakan untuk memprediksi kemungkinan diabetes. Dataset ini terdiri dari **768 sampel (baris)** dan **9 fitur (kolom)**.
 
-  - `Pregnancies`: Jumlah kehamilan yang pernah dialami pasien.
-  - `Glucose`: Konsentrasi glukosa plasma 2 jam dalam tes toleransi glukosa oral.
-  - `BloodPressure`: Tekanan darah diastolik (mm Hg).
-  - `SkinThickness`: Ketebalan lipatan kulit trisep (mm).
-  - `Insulin`: Kadar insulin serum 2 jam (mu U/ml).
-  - `BMI`: Indeks Massa Tubuh (berat dalam kg/(tinggi dalam m)^2).
-  - `DiabetesPedigreeFunction`: Fungsi silsilah diabetes, yang menunjukkan riwayat diabetes dalam keluarga.
-  - `Age`: Usia pasien (tahun).
-  - `Outcome`: Variabel kelas (0 = tidak diabetes, 1 = diabetes). Ini adalah variabel target yang akan diprediksi.
+### Variabel-variabel pada Dataset Pima Indians Diabetes adalah sebagai berikut:
 
-**Exploratory Data Analysis (EDA):**
-Berdasarkan eksplorasi pada notebook, beberapa tahapan penting dalam memahami data telah dilakukan:
+* **Pregnancies**: Jumlah kehamilan yang pernah dialami oleh pasien. Fitur numerik dengan tipe data integer.
+* **Glucose**: Konsentrasi glukosa plasma dalam darah setelah 2 jam dalam tes toleransi glukosa oral. Fitur numerik dengan tipe data integer.
+* **BloodPressure**: Tekanan darah diastolik (mm Hg). Fitur numerik dengan tipe data integer.
+* **SkinThickness**: Ketebalan lipatan kulit trisep (mm). Fitur numerik dengan tipe data integer.
+* **Insulin**: Kadar insulin serum setelah 2 jam dalam tes toleransi glukosa oral (mu U/ml). Fitur numerik dengan tipe data integer.
+* **BMI**: Indeks Massa Tubuh (Body Mass Index) dihitung dengan berat dalam kg / (tinggi dalam meter)^2. Fitur numerik dengan tipe data float.
+* **DiabetesPedigreeFunction**: Fungsi riwayat keluarga diabetes, yaitu suatu nilai yang menunjukkan kemungkinan diabetes berdasarkan riwayat keluarga. Fitur numerik dengan tipe data float.
+* **Age**: Usia pasien (tahun). Fitur numerik dengan tipe data integer.
+* **Outcome**: Variabel target yang menunjukkan apakah pasien didiagnosis diabetes (1) atau tidak (0). Fitur kategorikal (biner) dengan tipe data integer.
 
-  * **Inspeksi Data Awal:** Memuat data ke dalam Pandas DataFrame dan menggunakan `df.head()`, `df.info()`, dan `df.describe()` untuk mendapatkan gambaran umum tentang struktur, tipe data, dan statistik deskriptif. Ditemukan bahwa beberapa kolom numerik seperti `Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, dan `BMI` mengandung nilai '0' yang tidak masuk akal secara medis, mengindikasikan *missing values*.
-  * **Analisis Distribusi Variabel Target:** Memeriksa nilai unik dan hitungan pada kolom `Outcome` menunjukkan bahwa ada ketidakseimbangan kelas, dengan kelas '0' (tidak diabetes) memiliki 500 sampel dan kelas '1' (diabetes) memiliki 268 sampel. Ini akan memerlukan penanganan khusus selama persiapan data untuk mencegah bias model.
-  * **Visualisasi Distribusi Fitur:** Histogram dan box plot digunakan untuk memvisualisasikan distribusi masing-masing fitur. Visualisasi ini mengkonfirmasi keberadaan nilai '0' yang tidak valid dan mengidentifikasi potensi *outliers* pada beberapa fitur, seperti `Insulin` dan `Pregnancies`, yang dapat mempengaruhi kinerja model.
-  * **Analisis Korelasi:** Heatmap korelasi dibuat untuk melihat hubungan antara semua fitur, termasuk variabel target. Terlihat bahwa fitur `Glucose` dan `BMI` memiliki korelasi positif yang relatif lebih kuat dengan variabel `Outcome`, menunjukkan bahwa kedua fitur ini mungkin merupakan prediktor penting.
+### Exploratory Data Analysis (EDA)
 
-### 1. Exploratory Data Analysis - Deskripsi Variabel
+EDA dilakukan untuk memahami distribusi, pola, dan hubungan antar variabel dalam dataset.
 
-Pada tahap ini, `df.info()` digunakan untuk melihat dan memahami tipe data, distribusi, dan statistik deskriptif dataset.
-```python
-# Menampilkan info dataset
-df.info()
-```
-🔍 **Insight Deskripsi Variabel**
+#### 1. Analisis Univariat
+Analisis univariat berfokus pada setiap fitur secara individual menggunakan statistik deskriptif dan histogram.
 
-Dataset ini terdiri dari **768 sampel (baris) dan 9 fitur (kolom)**. Berikut adalah deskripsi untuk setiap kolom:
+* **Statistik Deskriptif**:
+    * **Pregnancies**: Rata-rata 3.85, dengan nilai minimum 0 dan maksimum 17. Nilai 0 mungkin mengindikasikan data tidak valid atau pasien belum pernah hamil.
+    * **Glucose**: Rata-rata 120.89, dengan nilai minimum 0 dan maksimum 199. Terdapat kemungkinan *outlier* atau nilai tidak valid (khususnya nilai 0).
+    * **BloodPressure**: Rata-rata 69.11, dengan nilai minimum 0 dan maksimum 122. Nilai 0 mengindikasikan kemungkinan data tidak valid.
+    * **SkinThickness**: Rata-rata 20.54, dengan nilai minimum 0 dan maksimum 99. Kemungkinan terdapat *outlier* atau data tidak valid.
+    * **Insulin**: Rata-rata 79.80, dengan nilai minimum 0 dan maksimum 846. Fitur ini memiliki rentang nilai yang sangat lebar dan kemungkinan terdapat *outlier*.
+    * **BMI**: Rata-rata 31.99, dengan nilai minimum 0 dan maksimum 67.1. Nilai 0 mengindikasikan kemungkinan adanya data tidak valid.
+    * **DiabetesPedigreeFunction**: Rata-rata 0.47, dengan nilai minimum 0.08 dan maksimum 2.42.
+    * **Age**: Rata-rata 33.24 tahun, dengan usia termuda 21 tahun dan tertua 81 tahun.
+    * **Outcome**: Sekitar 34.9% pasien (268 dari 768) didiagnosis menderita diabetes (Outcome = 1), menunjukkan adanya ketidakseimbangan kelas.
 
-* 🤰 **Pregnancies**: Jumlah kehamilan yang pernah dialami oleh pasien. Fitur numerik dengan tipe data integer.
-* 🍬 **Glucose**: Konsentrasi glukosa plasma dalam darah setelah 2 jam dalam tes toleransi glukosa oral. Fitur numerik dengan tipe data integer.
-* 💓 **BloodPressure**: Tekanan darah diastolik (mm Hg). Fitur numerik dengan tipe data integer.
-* 📏 **SkinThickness**: Ketebalan lipatan kulit trisep (mm). Fitur numerik dengan tipe data integer.
-* 💉 **Insulin**: Kadar insulin serum setelah 2 jam dalam tes toleransi glukosa oral (mu U/ml). Fitur numerik dengan tipe data integer.
-* ⚖️ **BMI**: Indeks Massa Tubuh (Body Mass Index) dihitung dengan berat dalam kg / (tinggi dalam meter)^2. Fitur numerik dengan tipe data float.
-* 🧬 **DiabetesPedigreeFunction**: Fungsi riwayat keluarga diabetes. Fitur numerik dengan tipe data float.
-* 🎂 **Age**: Usia pasien (tahun). Fitur numerik dengan tipe data integer.
-* ✅ **Outcome**: Variabel target yang menunjukkan apakah pasien didiagnosis diabetes (1) atau tidak (0). Fitur kategorikal (biner) dengan tipe data integer.
+* **Histogram**:
+    * **Pregnancies, SkinThickness, Insulin, dan DiabetesPedigreeFunction**: Memiliki distribusi yang menceng (skewed).
+    * **Glucose, BloodPressure, SkinThickness, Insulin, dan BMI**: Terdapat nilai 0 yang tidak realistis dan perlu ditangani.
+    * **Outcome**: Distribusi menunjukkan sekitar 65.1% 'Tidak Diabetes' dan 34.9% 'Diabetes', mengkonfirmasi ketidakseimbangan kelas.
 
-### 2. Exploratory Data Analysis - Univariate Analysis
+#### 2. Analisis Multivariat
+Analisis multivariat mengeksplorasi hubungan antar fitur menggunakan Pair Plot dan Correlation Matrix.
 
-Pada tahap ini, *Univariate Analysis* dilakukan untuk memahami karakteristik setiap fitur secara individual, dengan menghitung Statistik Deskriptif dan menggunakan visualisasi Histogram.
+* **Pair Plot**:
+    * **Glucose, Age, dan BMI**: Menunjukkan hubungan yang cukup kuat dengan `Outcome` (diabetes), berpotensi menjadi prediktor yang baik.
+    * **Insulin dan Glucose**: Terdapat korelasi positif, namun tidak terlalu kuat.
+    * **Pregnancies dan Age**: Terdapat korelasi positif yang wajar.
 
-#### a. Statistik Deskriptif
+* **Correlation Matrix**:
+    * **Korelasi terhadap Variabel Target (Outcome)**:
+        * **Glucose (0.47)**: Memiliki korelasi tertinggi, sangat berperan dalam prediksi diabetes.
+        * **BMI (0.29)**: Korelasi sedang, kelebihan berat badan berkontribusi terhadap risiko diabetes.
+        * **Age (0.24)**: Korelasi positif rendah, menunjukkan semakin tua usia, semakin tinggi kemungkinan mengidap diabetes.
+        * **Pregnancies (0.22)**: Korelasi positif terhadap Outcome.
+        * **Insulin (0.13), SkinThickness (0.07), dan BloodPressure (0.07)**: Memiliki korelasi sangat rendah.
+    * **Korelasi Antar Variabel Fitur**:
+        * **Pregnancies dan Age (0.54)**: Korelasi cukup kuat.
+        * **Insulin dan SkinThickness (0.44)** serta **SkinThickness dan BMI (0.39)**: Korelasi sedang dan logis secara medis.
+        * Korelasi antar fitur lainnya tergolong rendah, menandakan minimnya multikolinearitas.
 
-Ringkasan statistik deskriptif menggunakan `.describe()`.
-```python
-# Menampilkan statistik deskriptif
-df.describe()
-```
-🔍 **Insight Statistik Deskriptif**
-
-* 🤰 **Pregnancies**: Rata-rata **3.85**, min **0**, max **17**. Nilai **0** mungkin tidak valid.
-* 🍬 **Glucose**: Rata-rata **120.89**, min **0**, max **199**. Nilai **0** kemungkinan tidak valid.
-* 💓 **BloodPressure**: Rata-rata **69.11**, min **0**, max **122**. Nilai **0** kemungkinan tidak valid.
-* 📏 **SkinThickness**: Rata-rata **20.54**, min **0**, max **99**. Nilai **0** kemungkinan tidak valid.
-* 💉 **Insulin**: Rata-rata **79.80**, min **0**, max **846**. Rentang nilai lebar, kemungkinan *outlier*, dan banyak nilai **0**.
-* ⚖️ **BMI**: Rata-rata **31.99**, min **0**, max **67.1**. Nilai **0** kemungkinan tidak valid.
-* 🧬 **DiabetesPedigreeFunction**: Rata-rata **0.47**, min **0.08**, max **2.42**.
-* 🎂 **Age**: Rata-rata **33.24 tahun**, termuda **21 tahun**, tertua **81 tahun**.
-* ✅ **Outcome**: Sekitar **34.9% pasien** (268 dari 768) didiagnosis diabetes (**Outcome = 1**), menunjukkan **ketidakseimbangan kelas**.
-
-📌 **Kesimpulan Statistik Deskriptif:**
-Nilai **0** yang tidak realistis pada `Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, dan `BMI` perlu ditangani. Ketidakseimbangan kelas juga perlu diperhatikan.
-
-#### b. Histogram
-
-Histogram digunakan untuk memvisualisasikan distribusi data.
-```python
-# Histogram Univariate Analysis
-
-fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 9))
-axes = axes.flatten()
-
-for i, col in enumerate(df.drop('Outcome', axis=1).columns):
-    sns.histplot(df[col], ax=axes[i], kde=True, color=sns.color_palette()[i])
-    axes[i].set_title(f'Distribution of {col}')
-
-for i in range(len(df.drop('Outcome', axis=1).columns), len(axes)):
-    fig.delaxes(axes[i])
-
-plt.tight_layout()
-plt.show()
-```
-[Gambar Visualisasi Histogram Univariate Analysis]
-
-🔍 **Insight Histogram**
-
-* 🤰 **Pregnancies, SkinThickness, Insulin, DiabetesPedigreeFunction, Age**: Distribusi menceng ke kanan.
-* 🍬 **Glucose, BloodPressure, BMI**: Distribusi mendekati normal, tetapi terdapat nilai **0** yang tidak realistis.
-
-📌 **Kesimpulan Histogram:**
-Beberapa fitur memiliki distribusi yang menceng, dan nilai **0** yang tidak valid pada `Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, dan `BMI` perlu ditangani.
-
-```python
-# Visualisasi data untuk label outcome
-outcome_counts = df['Outcome'].value_counts()
-labels = ['No Diabetes', 'Diabetes']
-sizes = outcome_counts.values
-colors = sns.color_palette('pastel')
-
-# Membuat pie chart
-plt.figure(figsize=(6, 6))
-plt.pie(sizes, labels=labels, colors=colors, autopct=lambda p: '{:.1f}%\n({:.0f})'.format(p, p * sum(sizes) / 100), startangle=90,
-        textprops={'fontsize': 12})
-plt.title('Outcome Distribution', fontsize=14)
-plt.show()
-```
-[Gambar Visualisasi Pie Chart Outcome Distribution]
-
-### 3. Exploratory Data Analysis - Multivariate Analysis
-
-*Multivariate Analysis* dilakukan untuk memahami hubungan antar fitur menggunakan *Pair Plot* dan *Correlation Matrix*.
-
-#### a. Pair Plot
-
-*Pair plot* menampilkan *scatter plot* dan histogram untuk setiap pasangan fitur.
-```python
-# Pairplot
-sns.pairplot(df, hue='Outcome', diag_kind='kde')
-plt.show()
-```
-[Gambar Visualisasi Pair Plot]
-
-🔍 **Insight Pair Plot**
-
-* 🍬✅ **Hubungan Glucose, Age, dan BMI dengan Outcome**: Pasien dengan nilai yang lebih tinggi pada fitur-fitur ini cenderung didiagnosis diabetes.
-* 💉🍬 **Hubungan Insulin dan Glucose**: Terdapat korelasi positif, namun tidak terlalu kuat.
-* 🤰🎂 **Hubungan Pregnancies dan Age**: Terdapat korelasi positif.
-* 🔗 **Korelasi antar Fitur Lain**: Tampak lemah atau tidak signifikan.
-
-📌 **Kesimpulan Pair Plot:**
-Fitur **Glucose**, **Age**, dan **BMI** memiliki hubungan yang cukup kuat dengan **Outcome** dan berpotensi menjadi prediktor yang baik.
-
-#### b. Correlation Matrix
-
-*Correlation matrix* menunjukkan korelasi antar fitur.
-```python
-# Correlation Matrix
-plt.figure(figsize=(10, 8))
-correlation_matrix = df.corr()
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-plt.title('Correlation Matrix of Diabetes Dataset Features')
-plt.show()
-```
-[Gambar Visualisasi Correlation Matrix]
-
-🔍 **Insight Correlation Matrix**
-
-* 🔗 **Korelasi terhadap Variabel Target (Outcome)**:
-    * 🍬 **Glucose (0.47)** memiliki korelasi tertinggi.
-    * ⚖️ **BMI (0.29)**, 🎂 **Age (0.24)**, dan 🤰 **Pregnancies (0.22)** juga berkorelasi positif.
-    * 💉 **Insulin (0.13)**, 📏 **SkinThickness (0.07)**, dan 💓 **BloodPressure (0.07)** memiliki korelasi sangat rendah.
-* 🔗 **Korelasi Antar Variabel Fitur**:
-    * 🤰🎂 **Pregnancies dan Age (0.54)** memiliki korelasi cukup kuat.
-    * 💉📏 **Insulin dan SkinThickness (0.44)** serta 📏⚖️ **SkinThickness dan BMI (0.39)** memiliki korelasi sedang.
-    * Korelasi antar fitur lainnya tergolong rendah.
-
-📌 **Kesimpulan Correlation Matrix**
-Fitur **Glucose**, **BMI**, **Age**, dan **Pregnancies** adalah kandidat utama dalam pemodelan.
-
-### 4. Identifikasi Potensi Masalah
-
-Berdasarkan hasil EDA, beberapa potensi masalah teridentifikasi:
-
-- **Nilai 0 yang Tidak Realistis:** Fitur `Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, dan `BMI` memiliki nilai **0** yang tidak realistis secara medis.
-- **Outliers:** Beberapa fitur (`Insulin`, `SkinThickness`, dan `Pregnancies`) memiliki *outliers*.
-- **Data Imbalance:** Terdapat ketidakseimbangan jumlah data antara kelas 0 (tidak diabetes) dan kelas 1 (diabetes) pada variabel target (`Outcome`).
-- **Distribusi Data yang Miring:** Fitur `Pregnancies`, `SkinThickness`, `Insulin`, dan `DiabetesPedigreeFunction` memiliki distribusi yang menceng (skewed).
-- **Multikolinearitas:** Terdapat beberapa korelasi antar fitur, seperti antara `Pregnancies` dan `Age`, serta antara `Insulin` dan `SkinThickness`.
-
-Tentu, saya akan menjelaskan bagian "Data Preparation" secara rinci namun singkat, termasuk alasan mengapa setiap tahapan diperlukan, dan memastikan angka-angka sesuai dengan *notebook*.
+### Potensi Masalah Teridentifikasi:
+* **Nilai 0 yang Tidak Realistis**: Pada fitur Glucose, BloodPressure, SkinThickness, Insulin, dan BMI.
+* **Outliers**: Pada fitur Insulin, SkinThickness, dan Pregnancies.
+* **Data Imbalance**: Ketidakseimbangan jumlah data antara kelas 'Tidak Diabetes' (0) dan 'Diabetes' (1) pada variabel target ('Outcome').
+* **Distribusi Data yang Miring**: Pada fitur Pregnancies, SkinThickness, Insulin, dan DiabetesPedigreeFunction.
+* **Multikolinearitas**: Beberapa korelasi antar fitur, seperti antara Pregnancies dan Age, serta antara Insulin dan SkinThickness.
 
 ## Data Preparation
 
