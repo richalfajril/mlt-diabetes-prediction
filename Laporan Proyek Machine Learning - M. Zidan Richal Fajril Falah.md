@@ -191,6 +191,9 @@ df['Insulin'] = df['Insulin'].where((df['Insulin'] > 0)).fillna(df.groupby('Outc
 df['SkinThickness'] = df['SkinThickness'].where((df['SkinThickness'] > 0)).fillna(df.groupby('Outcome')["SkinThickness"].transform("mean"))
 ```
 
+Distribusi Variabel setelah Nilai 0 tidak Realistis ditangani:
+![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Histogram%202.png)
+
 #### d. Penanganan Outliers dan Distribusi Data yang Miring
 * **Teknik yang Digunakan**: *Capping* (Winsorizing) menggunakan metode IQR (Interquartile Range).
 * **Proses**:
@@ -221,13 +224,17 @@ for col in num_cols:
     replace_with_thresholds(df_imputed, col)
 ```
 
-Sebelum Outliers Handling:
+Boxplot sebelum Outliers Handling:
 
 ![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Boxplot%201.png)
 
-Sebelum Outliers Handling:
+Boxplot setelah Outliers Handling:
 
 ![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Boxplot%202.png)
+
+Distribusi Variabel setelah Outliers Handling:
+
+![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Histogram%203.png)
 
 ### 2. Feature Engineering
 
