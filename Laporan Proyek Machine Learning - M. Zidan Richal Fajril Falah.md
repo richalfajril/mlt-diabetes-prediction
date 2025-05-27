@@ -601,3 +601,11 @@ Secara keseluruhan, model AdaBoost menunjukkan kinerja yang sangat menjanjikan d
 [6] Ahmed, A., Khan, J., Arsalan, M., Ahmed, K., Shahat, A. A., Alhalmi, A., & Naaz, S. (2025). Machine Learning Algorithm-Based Prediction of Diabetes Among Female Population Using PIMA Dataset. *Healthcare*, *13*(1), 37. [https://doi.org/10.3390/healthcare13010037](https://www.google.com/search?q=https://doi.org/10.3390/healthcare13010037)
 
 [7] Han, J., Kamber, M., & Pei, J. (2012). *Data Mining: Concepts and Techniques* (3rd ed.). Morgan Kaufmann. (Link umum ke buku: [https://myweb.sabanciuniv.edu/rdehkharghani/files/2016/02/The-Morgan-Kaufmann-Series-in-Data-Management-Systems-Jiawei-Han-Micheline-Kamber-Jian-Pei-Data-Mining.-Concepts-and-Techniques-3rd-Edition-Morgan-Kaufmann-2011.pdf](https://myweb.sabanciuniv.edu/rdehkharghani/files/2016/02/The-Morgan-Kaufmann-Series-in-Data-Management-Systems-Jiawei-Han-Micheline-Kamber-Jian-Pei-Data-Mining.-Concepts-and-Techniques-3rd-Edition-Morgan-Kaufmann-2011.pdf))
+
+[1]: https://www.who.int/news-room/fact-sheets/detail/diabetes "World Health Organization - Diabetes Fact Sheet"
+[2]: https://diabetes.org/about-diabetes/statistics/about-diabetes "American Diabetes Association - Statistics About Diabetes"
+[3]: https://doi.org/10.1016/j.heliyon.2024.e24536 "Reza et al. (2024) - Improving diabetes disease patients classification..."
+[4]: https://diabetesatlas.org/ "International Diabetes Federation - IDF Diabetes Atlas, 10th Edition"
+[5]: https://doi.org/10.14569/IJACSA.2020.0111162 "Sarwar et al. (2020) - Machine learning approach for diabetes prediction..."
+[6]: https://doi.org/10.3390/healthcare13010037 "Ahmed et al. (2025) - Machine Learning Algorithm-Based Prediction of Diabetes..."
+[7]: https://myweb.sabanciuniv.edu/rdehkharghani/files/2016/02/The-Morgan-Kaufmann-Series-in-Data-Management-Systems-Jiawei-Han-Micheline-Kamber-Jian-Pei-Data-Mining.-Concepts-and-Techniques-3rd-Edition-Morgan-Kaufmann-2011.pdf "Han, Kamber, & Pei (2012) - Data Mining: Concepts and Techniques"
