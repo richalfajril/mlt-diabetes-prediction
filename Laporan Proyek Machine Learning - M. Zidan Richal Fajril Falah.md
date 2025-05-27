@@ -68,10 +68,7 @@ Berdasarkan eksplorasi pada notebook, beberapa tahapan penting dalam memahami da
   * **Visualisasi Distribusi Fitur:** Histogram dan box plot digunakan untuk memvisualisasikan distribusi masing-masing fitur. Visualisasi ini mengkonfirmasi keberadaan nilai '0' yang tidak valid dan mengidentifikasi potensi *outliers* pada beberapa fitur, seperti `Insulin` dan `Pregnancies`, yang dapat mempengaruhi kinerja model.
   * **Analisis Korelasi:** Heatmap korelasi dibuat untuk melihat hubungan antara semua fitur, termasuk variabel target. Terlihat bahwa fitur `Glucose` dan `BMI` memiliki korelasi positif yang relatif lebih kuat dengan variabel `Outcome`, menunjukkan bahwa kedua fitur ini mungkin merupakan prediktor penting.
 
-**Exploratory Data Analysis (EDA):**
-Berdasarkan eksplorasi pada *notebook*, beberapa tahapan penting dalam memahami data telah dilakukan:
-
-### 1.2 Exploratory Data Analysis - Deskripsi Variabel
+### 1. Exploratory Data Analysis - Deskripsi Variabel
 
 Pada tahap ini, `df.info()` digunakan untuk melihat dan memahami tipe data, distribusi, dan statistik deskriptif dataset.
 ```python
@@ -92,11 +89,11 @@ Dataset ini terdiri dari **768 sampel (baris) dan 9 fitur (kolom)**. Berikut ada
 * 🎂 **Age**: Usia pasien (tahun). Fitur numerik dengan tipe data integer.
 * ✅ **Outcome**: Variabel target yang menunjukkan apakah pasien didiagnosis diabetes (1) atau tidak (0). Fitur kategorikal (biner) dengan tipe data integer.
 
-### 1.3 Exploratory Data Analysis - Univariate Analysis
+### 2. Exploratory Data Analysis - Univariate Analysis
 
 Pada tahap ini, *Univariate Analysis* dilakukan untuk memahami karakteristik setiap fitur secara individual, dengan menghitung Statistik Deskriptif dan menggunakan visualisasi Histogram.
 
-#### 1.3.1 Statistik Deskriptif
+#### a. Statistik Deskriptif
 
 Ringkasan statistik deskriptif menggunakan `.describe()`.
 ```python
@@ -118,7 +115,7 @@ df.describe()
 📌 **Kesimpulan Statistik Deskriptif:**
 Nilai **0** yang tidak realistis pada `Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, dan `BMI` perlu ditangani. Ketidakseimbangan kelas juga perlu diperhatikan.
 
-#### 1.3.2 Histogram
+#### b. Histogram
 
 Histogram digunakan untuk memvisualisasikan distribusi data.
 ```python
@@ -163,11 +160,11 @@ plt.show()
 ```
 [Gambar Visualisasi Pie Chart Outcome Distribution]
 
-### 1.4 Exploratory Data Analysis - Multivariate Analysis
+### 3. Exploratory Data Analysis - Multivariate Analysis
 
 *Multivariate Analysis* dilakukan untuk memahami hubungan antar fitur menggunakan *Pair Plot* dan *Correlation Matrix*.
 
-#### 1.4.1 Pair Plot
+#### a. Pair Plot
 
 *Pair plot* menampilkan *scatter plot* dan histogram untuk setiap pasangan fitur.
 ```python
@@ -187,7 +184,7 @@ plt.show()
 📌 **Kesimpulan Pair Plot:**
 Fitur **Glucose**, **Age**, dan **BMI** memiliki hubungan yang cukup kuat dengan **Outcome** dan berpotensi menjadi prediktor yang baik.
 
-#### 1.4.2 Correlation Matrix
+#### b. Correlation Matrix
 
 *Correlation matrix* menunjukkan korelasi antar fitur.
 ```python
@@ -214,7 +211,7 @@ plt.show()
 📌 **Kesimpulan Correlation Matrix**
 Fitur **Glucose**, **BMI**, **Age**, dan **Pregnancies** adalah kandidat utama dalam pemodelan.
 
-### 1.5 Identifikasi Potensi Masalah
+### 4. Identifikasi Potensi Masalah
 
 Berdasarkan hasil EDA, beberapa potensi masalah teridentifikasi:
 
@@ -230,9 +227,9 @@ Tentu, saya akan menjelaskan bagian "Data Preparation" secara rinci namun singka
 
 Pada tahap ini, data dipersiapkan agar siap digunakan untuk pemodelan *machine learning*.
 
-### 2.1 Data Cleaning
+### 1. Data Cleaning
 
-#### 2.1.1 Pengecekan dan Penanganan Duplikat
+#### a. Pengecekan dan Penanganan Duplikat
 
 **Proses:** Memeriksa dan menghapus data duplikat dalam DataFrame menggunakan `.duplicated()`.
 ```python
@@ -248,7 +245,7 @@ if num_duplicates > 0:
 ```
 **Alasan:** Data duplikat dapat menyebabkan model menjadi bias dan *overfitting*. Penghapusan duplikat memastikan setiap observasi unik dan tidak ada pengaruh ganda dari data yang sama. Dalam proyek ini, tidak ditemukan data duplikat.
 
-#### 2.1.2 Pengecekan dan Penanganan Missing Values
+#### b. Pengecekan dan Penanganan Missing Values
 
 **Proses:** Memeriksa jumlah *missing values* (NaN) di setiap kolom DataFrame menggunakan `.isnull().sum()`.
 ```python
@@ -257,7 +254,7 @@ df.isnull().sum()
 ```
 **Alasan:** *Missing values* dapat menyebabkan error pada proses pemodelan atau menghasilkan model yang kurang akurat. Pengecekan ini memastikan tidak ada nilai NaN eksplisit yang perlu ditangani. Pada proyek ini, tidak ditemukan nilai NaN.
 
-#### 2.1.3 Pengecekan dan Penanganan Zero Values (Nilai 0 tidak realistis)
+#### c. Pengecekan dan Penanganan Zero Values (Nilai 0 tidak realistis)
 
 **Proses:** Memeriksa jumlah *zero values* pada fitur-fitur tertentu (`Glucose`, `BloodPressure`, `SkinThickness`, `Insulin`, `BMI`). Kemudian, nilai 0 ini diganti dengan nilai rata-rata (*mean*) dari masing-masing fitur yang dikelompokkan berdasarkan `Outcome`. Data yang telah diimputasi disimpan ke `df_imputed`.
 ```python
@@ -284,10 +281,10 @@ for feature in zero_features:
 ```
 **Alasan:** Beberapa fitur memiliki nilai **0** yang tidak realistis secara medis (misalnya, tekanan darah 0 atau BMI 0). Nilai-nilai ini dianggap sebagai *missing values* dan perlu ditangani karena dapat mengganggu perhitungan statistik dan kinerja model. Penggantian dengan *mean* per grup `Outcome` dipilih untuk mempertahankan distribusi data sebaik mungkin dan memanfaatkan informasi dari variabel target. Setelah proses ini, jumlah nilai 0 yang tidak realistis pada `Glucose` adalah 0, `BloodPressure` adalah 0, `SkinThickness` adalah 0, `Insulin` adalah 0, dan `BMI` adalah 0.
 
-#### 2.1.4 Penanganan Outliers dan Distribusi Data yang Miring
+#### d. Penanganan Outliers dan Distribusi Data yang Miring
 
 **Proses:**
-1.  **Identifikasi Outlier:** Menggunakan visualisasi Boxplot untuk mendeteksi keberadaan *outlier* pada setiap fitur numerik.
+- **Identifikasi Outlier:** Menggunakan visualisasi Boxplot untuk mendeteksi keberadaan *outlier* pada setiap fitur numerik.
     ```python
     # Periksa distribusi variabel menggunakan Boxplot
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 9))
@@ -305,7 +302,7 @@ for feature in zero_features:
     ```
     [Gambar Visualisasi Boxplot setelah Imputasi]
 
-2.  **Capping (Winsorizing):** Menggunakan fungsi `outlier_thresholds` (berdasarkan metode IQR) untuk menghitung batas bawah dan batas atas. Kemudian, nilai-nilai *outlier* yang berada di luar batas tersebut diganti dengan nilai ambang batas yang sesuai menggunakan fungsi `replace_with_thresholds`. Proses ini diterapkan pada semua kolom numerik. Data disimpan di `df_capped`.
+- **Capping (Winsorizing):** Menggunakan fungsi `outlier_thresholds` (berdasarkan metode IQR) untuk menghitung batas bawah dan batas atas. Kemudian, nilai-nilai *outlier* yang berada di luar batas tersebut diganti dengan nilai ambang batas yang sesuai menggunakan fungsi `replace_with_thresholds`. Proses ini diterapkan pada semua kolom numerik. Data disimpan di `df_capped`.
     ```python
     # Fungsi untuk menghitung batas bawah dan atas dengan IQR
     def outlier_thresholds(dataframe, col_name, q1=0.25, q3=0.75):
@@ -363,7 +360,7 @@ for feature in zero_features:
     * Kolom 'Age': 20 nilai dicapping ke batas bawah/atas.
     * Kolom 'Outcome': tidak ditemukan outlier.
 
-3.  **Pemeriksaan Ulang:** Visualisasi boxplot dan histogram diperiksa kembali untuk memastikan *outlier* telah ditangani dan distribusi data terlihat lebih baik. Statistik deskriptif juga ditampilkan kembali.
+- **Pemeriksaan Ulang:** Visualisasi boxplot dan histogram diperiksa kembali untuk memastikan *outlier* telah ditangani dan distribusi data terlihat lebih baik. Statistik deskriptif juga ditampilkan kembali.
     ```python
     # Periksa ulang distribusi variabel menggunakan Boxplot
     fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(9, 9))
@@ -402,14 +399,14 @@ for feature in zero_features:
 
 **Alasan:** *Outliers* dapat memengaruhi kinerja model secara signifikan karena model cenderung terlalu sensitif terhadap nilai ekstrem. Distribusi data yang miring dapat melanggar asumsi beberapa algoritma *machine learning*. *Capping* membantu mengurangi dampak *outlier* tanpa menghapus data, sehingga mempertahankan informasi penting.
 
-### 2.2 Feature Engineering
+### 2 Feature Engineering
 
 **Proses:** Menciptakan fitur-fitur baru dari fitur-fitur yang sudah ada.
-1.  **Glucose Insulin Ratio:** Fitur baru ini dihitung sebagai rasio antara kadar `Glucose` dan `Insulin`.
+a.  **Glucose Insulin Ratio:** Fitur baru ini dihitung sebagai rasio antara kadar `Glucose` dan `Insulin`.
     ```python
     df_capped['Glucose_Insulin_Ratio'] = df_capped['Glucose'] / df_capped['Insulin']
     ```
-2.  **Binning Fitur Numerik:** Fitur `Glucose`, `Insulin`, `BloodPressure`, `BMI`, dan `Age` dikelompokkan ke dalam kategori berdasarkan referensi klinis atau distribusi data.
+b.  **Binning Fitur Numerik:** Fitur `Glucose`, `Insulin`, `BloodPressure`, `BMI`, dan `Age` dikelompokkan ke dalam kategori berdasarkan referensi klinis atau distribusi data.
     * `Glucose_Group`: Kategorinya adalah 'Rendah', 'Normal', 'Pradiabetes', 'Diabetes'.
     * `Insulin_Group`: Kategorinya adalah 'Rendah', 'Normal', 'Tinggi'.
     * `BloodPressure_Group`: Kategorinya adalah 'Rendah', 'Normal', 'Pra-Hipertensi', 'Hipertensi'.
@@ -456,7 +453,7 @@ for feature in zero_features:
 
 **Alasan:** *Feature Engineering* bertujuan untuk memberikan informasi tambahan kepada model yang mungkin tidak terlihat dari fitur asli. `Glucose_Insulin_Ratio` dapat memberikan wawasan tentang sensitivitas insulin. *Binning* dapat membantu mengubah hubungan non-linear menjadi linear dan mengurangi sensitivitas terhadap *outlier*, serta menambahkan konteks klinis.
 
-### 2.3 Data Encoding
+### 3. Data Encoding
 
 **Proses:** Mengubah fitur-fitur kategorikal yang dibuat pada tahap *Feature Engineering* menjadi format numerik menggunakan **One-Hot Encoding**. Kolom-kolom kategorikal (`Glucose_Group`, `Insulin_Group`, `BloodPressure_Group`, `BMI_Group`, `Age_Group`) di-encode menggunakan `OneHotEncoder`. Hasilnya kemudian digabungkan dengan DataFrame asli yang kolom kategorikalnya telah dihapus, menghasilkan `df_encoded`.
 ```python
