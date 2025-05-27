@@ -933,9 +933,15 @@ ROC AUC Score sebesar **0.9419** menunjukkan bahwa model AdaBoost memiliki kemam
 **Referensi:**
 
 [1] World Health Organization. (2021). *Diabetes*. Retrieved from [https://www.who.int/news-room/fact-sheets/detail/diabetes](https://www.who.int/news-room/fact-sheets/detail/diabetes)/n
+
 [2] American Diabetes Association. (2020). *Statistics About Diabetes*. Retrieved from [https://diabetes.org/about-diabetes/statistics/about-diabetes](https://diabetes.org/about-diabetes/statistics/about-diabetes)
+
 [3] Reza, M. S., Amin, R., Yasmin, R., Kulsum, W., & Ruhi, S. (2024). Improving diabetes disease patients classification using stacking ensemble method with PIMA and local healthcare data. *Heliyon*, *10*(7), e24536. [https://doi.org/10.1016/j.heliyon.2024.e24536](https://www.google.com/search?q=https://doi.org/10.1016/j.heliyon.2024.e24536)
+
 [4] International Diabetes Federation. (2021). *IDF Diabetes Atlas, 10th Edition*. Brussels, Belgium: International Diabetes Federation. [https://diabetesatlas.org/](https://diabetesatlas.org/)
+
 [5] Sarwar, T., Iqbal, A., & Bashir, T. (2020). Machine learning approach for diabetes prediction using Pima Indian diabetes dataset. *International Journal of Advanced Computer Science and Applications, 11*(11). [https://doi.org/10.14569/IJACSA.2020.0111162](https://www.google.com/search?q=https://doi.org/10.14569/IJACSA.2020.0111162)
+
 [6] Ahmed, A., Khan, J., Arsalan, M., Ahmed, K., Shahat, A. A., Alhalmi, A., & Naaz, S. (2025). Machine Learning Algorithm-Based Prediction of Diabetes Among Female Population Using PIMA Dataset. *Healthcare*, *13*(1), 37. [https://doi.org/10.3390/healthcare13010037](https://www.google.com/search?q=https://doi.org/10.3390/healthcare13010037)
+
 [7] Han, J., Kamber, M., & Pei, J. (2012). *Data Mining: Concepts and Techniques* (3rd ed.). Morgan Kaufmann. (Link umum ke buku: [https://www.elsevier.com/books/data-mining-concepts-and-techniques/han/978-0-12-381479-1](https://www.elsevier.com/books/data-mining-concepts-and-techniques/han/978-0-12-381479-1))
