@@ -596,8 +596,8 @@ Secara keseluruhan, model AdaBoost menunjukkan kinerja yang sangat menjanjikan d
 
 [4] International Diabetes Federation. (2021). *IDF Diabetes Atlas, 10th Edition*. Brussels, Belgium: International Diabetes Federation. [https://diabetesatlas.org/](https://diabetesatlas.org/)
 
-[5] Sarwar, T., Iqbal, A., & Bashir, T. (2020). Machine learning approach for diabetes prediction using Pima Indian diabetes dataset. *International Journal of Advanced Computer Science and Applications, 11*(11). [https://doi.org/10.14569/IJACSA.2020.0111162](https://www.google.com/search?q=https://doi.org/10.14569/IJACSA.2020.0111162)
+[5] Sarwar, T., Iqbal, A., & Bashir, T. (2020). Machine learning approach for diabetes prediction using Pima Indian diabetes dataset. *International Journal of Advanced Computer Science and Applications, 11*(11). [https://doi.org/10.14569/IJACSA.2020.0111162](https://doi.org/10.14569/IJACSA.2020.0111162)
 
-[6] Ahmed, A., Khan, J., Arsalan, M., Ahmed, K., Shahat, A. A., Alhalmi, A., & Naaz, S. (2025). Machine Learning Algorithm-Based Prediction of Diabetes Among Female Population Using PIMA Dataset. *Healthcare*, *13*(1), 37. [https://doi.org/10.3390/healthcare13010037](https://www.google.com/search?q=https://doi.org/10.3390/healthcare13010037)
+[6] Ahmed, A., Khan, J., Arsalan, M., Ahmed, K., Shahat, A. A., Alhalmi, A., & Naaz, S. (2025). Machine Learning Algorithm-Based Prediction of Diabetes Among Female Population Using PIMA Dataset. *Healthcare*, *13*(1), 37. [https://doi.org/10.3390/healthcare13010037](https://doi.org/10.3390/healthcare13010037)
 
 [7] Han, J., Kamber, M., & Pei, J. (2012). *Data Mining: Concepts and Techniques* (3rd ed.). Morgan Kaufmann. (Link umum ke buku: [https://myweb.sabanciuniv.edu/rdehkharghani/files/2016/02/The-Morgan-Kaufmann-Series-in-Data-Management-Systems-Jiawei-Han-Micheline-Kamber-Jian-Pei-Data-Mining.-Concepts-and-Techniques-3rd-Edition-Morgan-Kaufmann-2011.pdf](https://myweb.sabanciuniv.edu/rdehkharghani/files/2016/02/The-Morgan-Kaufmann-Series-in-Data-Management-Systems-Jiawei-Han-Micheline-Kamber-Jian-Pei-Data-Mining.-Concepts-and-Techniques-3rd-Edition-Morgan-Kaufmann-2011.pdf))
