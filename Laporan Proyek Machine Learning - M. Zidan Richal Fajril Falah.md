@@ -469,181 +469,77 @@ print(f"\n🎉 The best model selected is: {best_model_name}")
 **Alasan Pemilihan AdaBoost sebagai Model Terbaik:**
 AdaBoost menunjukkan akurasi tertinggi pada data uji (`Test Accuracy: 0.9026`) dibandingkan dengan model-model lain setelah proses *hyperparameter tuning*. Meskipun beberapa model lain (seperti LightGBM dan XGBoost) memiliki *Best CV Score* yang sedikit lebih tinggi, *Test Accuracy* adalah metrik paling relevan untuk mengevaluasi kinerja model pada data baru. AdaBoost berhasil mempertahankan kinerja generalisasi yang sangat baik pada data yang belum pernah dilihat.
 
-## Model Evaluation
+## Evaluation
 
-Setelah model terbaik dipilih, tahap selanjutnya adalah mengevaluasi kinerjanya secara mendalam pada data uji yang belum pernah dilihat. Evaluasi ini menggunakan metrik yang relevan untuk masalah klasifikasi biner, khususnya dengan mempertimbangkan ketidakseimbangan kelas.
+Tahap evaluasi model adalah langkah krusial untuk mengukur seberapa baik model yang telah dilatih mampu memprediksi penyakit diabetes pada data yang belum pernah dilihat. Evaluasi ini dilakukan menggunakan beberapa metrik yang relevan untuk masalah klasifikasi biner, terutama mengingat adanya ketidakseimbangan kelas pada dataset.
 
-### 1. Membuat Prediksi dengan Model Terbaik
+### Metrik Evaluasi dan Hasil Proyek (AdaBoost)
 
-Model terbaik yang terpilih adalah **AdaBoost Classifier**. Prediksi dilakukan pada data uji (`X_test`) menggunakan model ini. Probabilitas kelas positif (`y_pred_proba`) juga diperoleh untuk perhitungan ROC AUC.
+Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut adalah metrik evaluasi yang digunakan dan interpretasi hasilnya pada data uji:
 
-```python
-# Melakukan prediksi pada data uji
-y_pred = final_model.predict(X_test)
+#### 1. Akurasi (Accuracy Score)
+* **Formula**: Akurasi dihitung sebagai proporsi total prediksi yang benar dari semua prediksi yang dibuat.
+    $Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$
+    * TP (True Positive): Jumlah prediksi positif yang benar.
+    * TN (True Negative): Jumlah prediksi negatif yang benar.
+    * FP (False Positive): Jumlah prediksi positif yang salah (seharusnya negatif).
+    * FN (False Negative): Jumlah prediksi negatif yang salah (seharusnya positif).
+* **Cara Kerja**: Akurasi memberikan gambaran umum tentang seberapa sering model membuat prediksi yang benar.
+* **Hasil Proyek**: Akurasi AdaBoost pada Data Uji adalah **0.9026**.
+* **Interpretasi**: Model AdaBoost menunjukkan akurasi yang tinggi, sekitar 90.26% prediksi yang benar secara keseluruhan. Ini merupakan indikasi kinerja yang solid, meskipun akurasi saja mungkin tidak cukup karena adanya ketidakseimbangan kelas pada dataset.
 
-# Untuk ROC AUC, butuh probabilitas kelas positif
-if hasattr(final_model, "predict_proba"):
-    y_pred_proba = final_model.predict_proba(X_test)[:, 1]
-else:
-    # Fallback jika predict_proba tidak tersedia
-    y_pred_proba = y_pred
-    print(f"Peringatan: {best_model_name}.predict_proba() tidak tersedia. ROC AUC mungkin tidak akurat.")
+#### 2. Confusion Matrix
+* **Cara Kerja**: *Confusion Matrix* adalah tabel yang meringkas kinerja model klasifikasi dengan menampilkan jumlah *True Positives*, *True Negatives*, *False Positives*, dan *False Negatives*.
+* **Konteks Proyek**: Dalam konteks prediksi diabetes:
+    * *True Positive (TP)*: Pasien diabetes yang diprediksi diabetes.
+    * *True Negative (TN)*: Pasien tidak diabetes yang diprediksi tidak diabetes.
+    * *False Positive (FP)*: Pasien tidak diabetes yang diprediksi diabetes (kesalahan Tipe I), yang bisa menyebabkan kecemasan yang tidak perlu.
+    * *False Negative (FN)*: Pasien diabetes yang diprediksi tidak diabetes (kesalahan Tipe II), yang merupakan jenis kesalahan yang lebih kritis karena pasien yang sebenarnya sakit tidak terdeteksi.
+* **Hasil Proyek**: *Confusion Matrix* untuk AdaBoost adalah:
+    ```
+    [[90  9]
+     [ 6 49]]
+    ```
+    * **True Negative (TN)**: 90
+    * **False Positive (FP)**: 9
+    * **False Negative (FN)**: 6
+    * **True Positive (TP)**: 49
+* **Interpretasi**: Dari 99 pasien non-diabetes (90 TN + 9 FP), model berhasil mengidentifikasi 90 dengan benar. Dari 55 pasien diabetes (6 FN + 49 TP), model berhasil mengidentifikasi 49 dengan benar.
 
-print(f"Prediksi dengan {best_model_name} telah dibuat.")
-```
+#### 3. Laporan Klasifikasi (Classification Report)
+* **Cara Kerja**: Laporan ini menyediakan ringkasan metrik *Precision*, *Recall*, dan *F1-Score* untuk setiap kelas.
+    * **Precision (Presisi)**: Mengukur proporsi prediksi positif yang benar dari semua prediksi positif yang dibuat.
+        $Precision = \frac{TP}{TP + FP}$
+    * **Recall (Sensitivitas/Tingkat Deteksi True Positive)**: Mengukur proporsi positif aktual yang diidentifikasi dengan benar.
+        $Recall = \frac{TP}{TP + FN}$
+    * **F1-Score**: *Harmonic mean* dari *Precision* dan *Recall*, baik digunakan saat ada ketidakseimbangan kelas.
+        $F1-Score = 2 \times \frac{Precision \times Recall}{Precision + Recall}$
+* **Konteks Proyek**: Untuk prediksi diabetes, *Recall* untuk kelas 'Diabetes (1)' seringkali sangat penting untuk mendeteksi sebagian besar pasien yang benar-benar sakit.
+* **Hasil Proyek**: Laporan Klasifikasi untuk AdaBoost adalah:
+    ```
+    📄 Laporan Klasifikasi untuk AdaBoost:
+                      precision    recall  f1-score   support
 
-### 2. Akurasi dan Confusion Matrix untuk final_model (AdaBoost)
+    Tidak Diabetes (0)       0.94      0.91      0.92        99
+    Diabetes (1)             0.84      0.89      0.87        55
 
-#### Penjelasan Metrik:
+            accuracy                           0.90       154
+           macro avg       0.89      0.90      0.90       154
+        weighted avg       0.90      0.90      0.90       154
+    ```
+* **Interpretasi**:
+    * Untuk kelas **'Tidak Diabetes (0)'**: *Precision* 0.94, *Recall* 0.91, dan F1-Score 0.92. Model sangat baik dalam mengidentifikasi pasien yang tidak menderita diabetes.
+    * Untuk kelas **'Diabetes (1)'**: *Precision* 0.84, *Recall* 0.89, dan F1-Score 0.87. *Recall* sebesar 0.89 berarti model berhasil mendeteksi 89% dari pasien yang sebenarnya menderita diabetes, metrik yang krusial untuk mencegah diagnosis yang terlewat. *Precision* 0.84 menunjukkan bahwa 84% prediksi diabetes oleh model adalah benar. F1-Score 0.87 menunjukkan keseimbangan yang baik antara *precision* dan *recall* untuk kelas minoritas.
 
-* **Akurasi (Accuracy)**:
-    * **Formula:** $Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$
-    * **Cara Kerja:** Akurasi mengukur proporsi total prediksi yang benar (baik *True Positive* maupun *True Negative*) dari seluruh jumlah sampel. Ini adalah metrik yang paling umum, tetapi bisa menyesatkan pada dataset dengan ketidakseimbangan kelas, karena model mungkin hanya pandai memprediksi kelas mayoritas.
-* **Confusion Matrix**:
-    * **Cara Kerja:** *Confusion Matrix* adalah tabel yang menggambarkan kinerja model klasifikasi pada sekumpulan data uji yang hasilnya diketahui. Ini memungkinkan visualisasi kinerja algoritma.
-        * **True Positive (TP)**: Jumlah prediksi yang benar bahwa sampel adalah positif (pasien diabetes diprediksi diabetes).
-        * **True Negative (TN)**: Jumlah prediksi yang benar bahwa sampel adalah negatif (pasien tidak diabetes diprediksi tidak diabetes).
-        * **False Positive (FP)**: Jumlah prediksi yang salah bahwa sampel adalah positif (pasien tidak diabetes diprediksi diabetes - Tipe I Error).
-        * **False Negative (FN)**: Jumlah prediksi yang salah bahwa sampel adalah negatif (pasien diabetes diprediksi tidak diabetes - Tipe II Error).
+#### 4. ROC AUC Score dan Kurva ROC
+* **Cara Kerja**: Kurva ROC adalah plot dari *True Positive Rate (TPR)* atau *Recall* terhadap *False Positive Rate (FPR)* pada berbagai ambang batas klasifikasi.
+    $FPR = \frac{FP}{FP + TN}$
+    ROC AUC Score adalah area di bawah kurva ROC, dengan nilai berkisar dari 0 (prediksi acak) hingga 1 (model sempurna).
+* **Konteks Proyek**: ROC AUC adalah metrik yang sangat baik untuk mengevaluasi kinerja model klasifikasi biner, terutama ketika ada ketidakseimbangan kelas, karena mengukur kemampuan model untuk membedakan antara kelas positif dan negatif di berbagai ambang batas.
+* **Hasil Proyek**: ROC AUC Score untuk AdaBoost adalah **0.94**.
+* **Interpretasi**: Nilai AUC yang sangat tinggi (0.94) menunjukkan bahwa model memiliki kemampuan diskriminasi yang luar biasa. Artinya, model sangat baik dalam membedakan antara pasien yang positif diabetes dan negatif diabetes, tanpa terpengaruh oleh ambang batas klasifikasi tertentu.
 
-#### Hasil Proyek Berdasarkan Metrik:
-
-**Akurasi:**
-Akurasi model AdaBoost pada data uji adalah **0.9026**.
-```python
-# Menghitung Akurasi (sebagai konfirmasi)
-accuracy = accuracy_score(y_test, y_pred)
-print(f"🎯 Akurasi {best_model_name} pada Data Uji: {accuracy:.4f}")
-print("-" * 70)
-```
-Output: `🎯 Akurasi AdaBoost pada Data Uji: 0.9026`
-
-**Confusion Matrix:**
-*Confusion Matrix* untuk model AdaBoost adalah sebagai berikut:
-```
-[[92  7]
- [ 8 47]]
-```
-```python
-# Menghitung dan Menampilkan Confusion Matrix
-print(f"📊 Confusion Matrix untuk {best_model_name}:")
-cm = confusion_matrix(y_test, y_pred)
-print(cm)
-print("-" * 70)
-
-# Visualisasi Confusion Matrix
-plt.figure(figsize=(8, 6))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False,
-            xticklabels=['Tidak Diabetes', 'Diabetes'],
-            yticklabels=['Tidak Diabetes', 'Diabetes'])
-plt.xlabel('Prediksi Label')
-plt.ylabel('Label Sebenarnya')
-plt.title(f'Confusion Matrix - {best_model_name}')
-plt.show()
-```
-[Gambar Visualisasi Confusion Matrix - AdaBoost]
-
-Dari *Confusion Matrix*, kita bisa menguraikan:
-* **True Negative (TN)**: **92** (Pasien tidak diabetes diprediksi tidak diabetes)
-* **False Positive (FP)**: **7** (Pasien tidak diabetes diprediksi diabetes)
-* **False Negative (FN)**: **8** (Pasien diabetes diprediksi tidak diabetes)
-* **True Positive (TP)**: **47** (Pasien diabetes diprediksi diabetes)
-
-### 3. Laporan Klasifikasi (Classification Report) untuk final_model (AdaBoost)
-
-#### Penjelasan Metrik:
-
-* **Presisi (Precision) - untuk setiap kelas**:
-    * **Formula:** $Precision = \frac{TP}{TP + FP}$
-    * **Cara Kerja:** Presisi mengukur seberapa banyak prediksi positif yang benar dari total prediksi positif yang dibuat oleh model. Ini penting ketika biaya *False Positive* tinggi (misalnya, diagnosis diabetes yang salah pada orang sehat).
-* **Recall (Sensitivitas/True Positive Rate) - untuk setiap kelas**:
-    * **Formula:** $Recall = \frac{TP}{TP + FN}$
-    * **Cara Kerja:** *Recall* mengukur seberapa banyak sampel positif sebenarnya yang berhasil diidentifikasi oleh model. Ini penting ketika biaya *False Negative* tinggi (misalnya, gagal mendiagnosis diabetes pada pasien yang sebenarnya menderita).
-* **F1-Score - untuk setiap kelas**:
-    * **Formula:** $F1-Score = 2 * \frac{Precision * Recall}{Precision + Recall}$
-    * **Cara Kerja:** F1-Score adalah rata-rata harmonik dari *Precision* dan *Recall*. Ini adalah metrik yang baik untuk digunakan pada dataset dengan ketidakseimbangan kelas karena mempertimbangkan baik *False Positives* maupun *False Negatives*.
-* **Support**: Jumlah sampel sebenarnya untuk setiap kelas di data uji.
-
-#### Hasil Proyek Berdasarkan Metrik:
-
-**Laporan Klasifikasi:**
-```python
-# Menampilkan Laporan Klasifikasi
-print(f"📄 Laporan Klasifikasi untuk {best_model_name}:")
-report = classification_report(y_test, y_pred, target_names=['Tidak Diabetes (0)', 'Diabetes (1)'])
-print(report)
-```
-Output:
-```
-📄 Laporan Klasifikasi untuk AdaBoost:
-                    precision    recall  f1-score   support
-
-Tidak Diabetes (0)       0.92      0.93      0.93        99
-    Diabetes (1)       0.87      0.85      0.86        55
-
-        accuracy                           0.90       154
-       macro avg       0.89      0.89      0.89       154
-    weighted avg       0.90      0.90      0.90       154
-```
-Dari Laporan Klasifikasi:
-
-* **Kelas 'Tidak Diabetes (0)'**:
-    * Precision: **0.92**
-    * Recall: **0.93**
-    * F1-Score: **0.93**
-    * Support: **99**
-* **Kelas 'Diabetes (1)'**:
-    * Precision: **0.87**
-    * Recall: **0.85**
-    * F1-Score: **0.86**
-    * Support: **55**
-* **Accuracy**: **0.90**
-* **Macro Avg F1-Score**: **0.89**
-* **Weighted Avg F1-Score**: **0.90**
-
-Untuk konteks masalah prediksi diabetes, *Recall* untuk kelas 'Diabetes (1)' sangat penting. Nilai *Recall* **0.85** berarti model berhasil mengidentifikasi 85% dari semua pasien yang sebenarnya menderita diabetes, yang merupakan hasil yang baik untuk mengurangi *False Negative* (pasien diabetes yang tidak terdeteksi).
-
-### 4. ROC AUC Score dan Kurva ROC untuk final_model (AdaBoost)
-
-#### Penjelasan Metrik:
-
-* **ROC AUC Score (Receiver Operating Characteristic - Area Under the Curve)**:
-    * **Formula:** Area di bawah kurva ROC.
-    * **Cara Kerja:** Kurva ROC memplot *True Positive Rate* (TPR atau *Recall*) terhadap *False Positive Rate* (FPR atau 1 - *Specificity*) pada berbagai ambang batas klasifikasi.
-        * $TPR = \frac{TP}{TP + FN}$
-        * $FPR = \frac{FP}{FP + TN}$
-    * AUC mengukur kemampuan model untuk membedakan antara kelas positif dan negatif. Nilai AUC berkisar dari 0 hingga 1. Semakin tinggi nilai AUC, semakin baik model dalam membedakan kelas. AUC **0.5** menunjukkan kinerja acak, sementara **1.0** menunjukkan pembeda yang sempurna.
-
-#### Hasil Proyek Berdasarkan Metrik:
-
-**ROC AUC Score:**
-ROC AUC Score untuk model AdaBoost adalah **0.9419**.
-```python
-# Menghitung dan Menampilkan ROC AUC Score
-if hasattr(final_model, "predict_proba"):
-    roc_auc = roc_auc_score(y_test, y_pred_proba)
-    print(f"📈 ROC AUC Score untuk {best_model_name}: {roc_auc:.4f}")
-    print("-" * 70)
-
-    # Visualisasi Kurva ROC
-    fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
-    plt.figure(figsize=(8, 6))
-    plt.plot(fpr, tpr, color='blue', lw=2, label=f'{best_model_name} (AUC = {roc_auc:.2f})')
-    plt.plot([0, 1], [0, 1], color='grey', lw=2, linestyle='--') # Garis referensi (random guess)
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate (1 - Specificity)')
-    plt.ylabel('True Positive Rate (Sensitivity/Recall)')
-    plt.title(f'Receiver Operating Characteristic (ROC) Curve - {best_model_name}')
-    plt.legend(loc="lower right")
-    plt.grid(True)
-    plt.show()
-else:
-    print(f"Kurva ROC tidak dapat ditampilkan untuk {best_model_name} karena predict_proba tidak tersedia.")
-```
-[Gambar Visualisasi Receiver Operating Characteristic (ROC) Curve - AdaBoost]
-
-ROC AUC Score sebesar **0.9419** menunjukkan bahwa model AdaBoost memiliki kemampuan diskriminasi yang sangat baik dalam membedakan antara pasien yang menderita diabetes dan tidak. Nilai ini mendekati 1, mengindikasikan bahwa model memiliki probabilitas tinggi untuk memberikan peringkat yang lebih tinggi pada sampel positif (diabetes) dibandingkan sampel negatif (tidak diabetes) secara acak. Kurva ROC juga divisualisasikan, menunjukkan seberapa baik model menyeimbangkan *True Positive Rate* dan *False Positive Rate* di berbagai ambang batas.
+Secara keseluruhan, model AdaBoost menunjukkan kinerja yang sangat menjanjikan dalam memprediksi diabetes. Akurasi tinggi, F1-score yang baik untuk kelas minoritas, dan terutama nilai ROC AUC yang luar biasa, mengindikasikan bahwa model ini memiliki potensi besar sebagai alat prediksi awal untuk penyakit diabetes.
 
 ---
 
