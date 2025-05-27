@@ -115,6 +115,7 @@ Analisis multivariat mengeksplorasi hubungan antar fitur menggunakan Pair Plot d
     * **Pregnancies dan Age**: Terdapat korelasi positif yang wajar.
 
 * **Correlation Matrix**:
+  
   ![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Corr%20Matrix%201.png)
   
     * **Korelasi terhadap Variabel Target (Outcome)**:
@@ -510,6 +511,9 @@ Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut a
 * **Interpretasi**: Model AdaBoost menunjukkan akurasi yang tinggi, sekitar 90.26% prediksi yang benar secara keseluruhan. Ini merupakan indikasi kinerja yang solid, meskipun akurasi saja mungkin tidak cukup karena adanya ketidakseimbangan kelas pada dataset.
 
 #### 2. Confusion Matrix
+
+![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Confusion%20Matrix.png)
+
 * **Cara Kerja**: *Confusion Matrix* adalah tabel yang meringkas kinerja model klasifikasi dengan menampilkan jumlah *True Positives*, *True Negatives*, *False Positives*, dan *False Negatives*.
 * **Konteks Proyek**: Dalam konteks prediksi diabetes:
     * *True Positive (TP)*: Pasien diabetes yang diprediksi diabetes.
@@ -553,6 +557,9 @@ Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut a
     * Untuk kelas **'Diabetes (1)'**: *Precision* 0.84, *Recall* 0.89, dan F1-Score 0.87. *Recall* sebesar 0.89 berarti model berhasil mendeteksi 89% dari pasien yang sebenarnya menderita diabetes, metrik yang krusial untuk mencegah diagnosis yang terlewat. *Precision* 0.84 menunjukkan bahwa 84% prediksi diabetes oleh model adalah benar. F1-Score 0.87 menunjukkan keseimbangan yang baik antara *precision* dan *recall* untuk kelas minoritas.
 
 #### 4. ROC AUC Score dan Kurva ROC
+
+![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/ROC%20Curve.png)
+
 * **Cara Kerja**: Kurva ROC adalah plot dari *True Positive Rate (TPR)* atau *Recall* terhadap *False Positive Rate (FPR)* pada berbagai ambang batas klasifikasi.
     $FPR = \frac{FP}{FP + TN}$
     ROC AUC Score adalah area di bawah kurva ROC, dengan nilai berkisar dari 0 (prediksi acak) hingga 1 (model sempurna).
