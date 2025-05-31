@@ -1,7 +1,6 @@
 # Laporan Proyek Machine Learning - M. Zidan Richal Fajril Falah
 
 ## Domain Proyek
-<img src="https://cdn.who.int/media/images/default-source/imported/diabetes5.tmb-1920v.png?sfvrsn=1b2e7651_44" alt="Diabetes" width="100%" height="500px">
 
 Diabetes mellitus adalah penyakit metabolik kronis yang ditandai oleh kadar gula darah tinggi (hiperglikemia), baik karena pankreas tidak menghasilkan cukup insulin, atau karena tubuh tidak dapat secara efektif menggunakan insulin yang dihasilkannya. Penyakit ini merupakan masalah kesehatan masyarakat global yang signifikan [[1]](https://www.who.int/news-room/fact-sheets/detail/diabetes). Komplikasi jangka panjang akibat diabetes sangat serius, meliputi penyakit jantung, stroke, gagal ginjal, kebutaan, dan amputasi kaki, jika tidak didiagnosis dan ditangani secara tepat waktu [[1]](https://www.who.int/news-room/fact-sheets/detail/diabetes)[[2]](https://diabetes.org/about-diabetes/statistics/about-diabetes) . Organisasi Kesehatan Dunia (WHO) memperkirakan bahwa pada tahun 2014, sekitar 422 juta orang dewasa hidup dengan diabetes, dengan tren peningkatan yang berkelanjutan [[2]](https://diabetes.org/about-diabetes/statistics/about-diabetes). Studi terbaru bahkan menunjukkan bahwa satu dari setiap dua penderita diabetes mungkin tidak terdiagnosis, menggarisbawahi urgensi diagnosis dini [[3]](https://doi.org/10.1016/j.heliyon.2024.e24536).
 
