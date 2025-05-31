@@ -96,9 +96,6 @@ Analisis univariat berfokus pada setiap fitur secara individual menggunakan stat
     * **Outcome**: Sekitar 34.9% pasien (268 dari 768) didiagnosis menderita diabetes (Outcome = 1), menunjukkan adanya ketidakseimbangan kelas.
 
 * **Histogram**:
-  
-    ![Histogram 1](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Histogram%201.png)
-  
     * **Pregnancies, SkinThickness, Insulin, dan DiabetesPedigreeFunction**: Memiliki distribusi yang menceng (skewed).
     * **Glucose, BloodPressure, SkinThickness, Insulin, dan BMI**: Terdapat nilai 0 yang tidak realistis dan perlu ditangani.
     * **Outcome**: Distribusi menunjukkan sekitar 65.1% 'Tidak Diabetes' dan 34.9% 'Diabetes', mengkonfirmasi ketidakseimbangan kelas.
@@ -107,17 +104,11 @@ Analisis univariat berfokus pada setiap fitur secara individual menggunakan stat
 Analisis multivariat mengeksplorasi hubungan antar fitur menggunakan Pair Plot dan Correlation Matrix.
 
 * **Pair Plot**:
-  
-    ![Pair Plot 1](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Pair%20Plot%201.png)
-  
     * **Glucose, Age, dan BMI**: Menunjukkan hubungan yang cukup kuat dengan `Outcome` (diabetes), berpotensi menjadi prediktor yang baik.
     * **Insulin dan Glucose**: Terdapat korelasi positif, namun tidak terlalu kuat.
     * **Pregnancies dan Age**: Terdapat korelasi positif yang wajar.
 
 * **Correlation Matrix**:
-  
-  ![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Corr%20Matrix%201.png)
-  
     * **Korelasi terhadap Variabel Target (Outcome)**:
         * **Glucose (0.47)**: Memiliki korelasi tertinggi, sangat berperan dalam prediksi diabetes.
         * **BMI (0.29)**: Korelasi sedang, kelebihan berat badan berkontribusi terhadap risiko diabetes.
@@ -191,9 +182,6 @@ df['Insulin'] = df['Insulin'].where((df['Insulin'] > 0)).fillna(df.groupby('Outc
 df['SkinThickness'] = df['SkinThickness'].where((df['SkinThickness'] > 0)).fillna(df.groupby('Outcome')["SkinThickness"].transform("mean"))
 ```
 
-Distribusi Variabel setelah Nilai 0 tidak Realistis ditangani:
-![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Histogram%202.png)
-
 #### d. Penanganan Outliers dan Distribusi Data yang Miring
 * **Teknik yang Digunakan**: *Capping* (Winsorizing) menggunakan metode IQR (Interquartile Range).
 * **Proses**:
@@ -223,18 +211,6 @@ num_cols = df_imputed.select_dtypes(include=['int64', 'float64']).columns
 for col in num_cols:
     replace_with_thresholds(df_imputed, col)
 ```
-
-Boxplot sebelum Outliers Handling:
-
-![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Boxplot%201.png)
-
-Boxplot setelah Outliers Handling:
-
-![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Boxplot%202.png)
-
-Distribusi Variabel setelah Outliers Handling:
-
-![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Histogram%203.png)
 
 ### 2. Feature Engineering
 
@@ -527,8 +503,6 @@ Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut a
 
 #### 2. Confusion Matrix
 
-![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/Confusion%20Matrix.png)
-
 * **Cara Kerja**: *Confusion Matrix* adalah tabel yang meringkas kinerja model klasifikasi dengan menampilkan jumlah *True Positives*, *True Negatives*, *False Positives*, dan *False Negatives*.
 * **Konteks Proyek**: Dalam konteks prediksi diabetes:
     * *True Positive (TP)*: Pasien diabetes yang diprediksi diabetes.
@@ -572,8 +546,6 @@ Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut a
     * Untuk kelas **'Diabetes (1)'**: *Precision* 0.84, *Recall* 0.89, dan F1-Score 0.87. *Recall* sebesar 0.89 berarti model berhasil mendeteksi 89% dari pasien yang sebenarnya menderita diabetes, metrik yang krusial untuk mencegah diagnosis yang terlewat. *Precision* 0.84 menunjukkan bahwa 84% prediksi diabetes oleh model adalah benar. F1-Score 0.87 menunjukkan keseimbangan yang baik antara *precision* dan *recall* untuk kelas minoritas.
 
 #### 4. ROC AUC Score dan Kurva ROC
-
-![](https://github.com/richalfajril/mlt-diabetes-prediction/blob/main/ROC%20Curve.png)
 
 * **Cara Kerja**: Kurva ROC adalah plot dari *True Positive Rate (TPR)* atau *Recall* terhadap *False Positive Rate (FPR)* pada berbagai ambang batas klasifikasi.
     $FPR = \frac{FP}{FP + TN}$
