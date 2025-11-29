@@ -224,43 +224,7 @@ Tahap ini bertujuan untuk menciptakan fitur-fitur baru dari fitur yang sudah ada
 df_capped['Glucose_Insulin_Ratio'] = df_capped['Glucose'] / df_capped['Insulin']
 ```
 
-#### b. Binning Fitur Numerik
-* **Teknik yang Digunakan**: Pengelompokan (binning) fitur numerik ke dalam kategori diskrit.
-* **Proses**: Fitur-fitur numerik seperti `Glucose`, `Insulin`, `BloodPressure`, `BMI`, dan `Age` dikelompokkan ke dalam kategori-kategori berdasarkan referensi klinis atau distribusi data (misalnya, 'Rendah', 'Normal', 'Pradiabetes', 'Diabetes' untuk Glukosa; 'Muda', 'Dewasa', 'Tua' untuk Age).
-* **Alasan**: Binning dapat mengubah hubungan non-linear menjadi linear dan mengurangi sensitivitas terhadap *outlier*. Ini juga dapat membantu model menangkap pola yang lebih general pada data.
-
-```python
-# Contoh binning Glucose
-def bin_glucose(glucose):
-    if glucose < 70:
-        return 'Rendah'
-    elif 70 <= glucose <= 99:
-        return 'Normal'
-    elif 100 <= glucose <= 125:
-        return 'Pradiabetes'
-    else:
-        return 'Diabetes'
-df_capped['Glucose_Group'] = df_capped['Glucose'].apply(bin_glucose)
-
-# Binning untuk fitur lain seperti Insulin, BloodPressure, BMI, Age juga dilakukan dengan logika serupa.
-```
-
-### 3. Data Encoding
-
-* **Teknik yang Digunakan**: *One-Hot Encoding*.
-* **Proses**: Fitur-fitur kategorikal baru yang dihasilkan dari proses *binning* (`Glucose_Group`, `Insulin_Group`, `BloodPressure_Group`, `BMI_Group`, `Age_Group`) diubah menjadi format numerik menggunakan `OneHotEncoder`. Setiap kategori unik akan menjadi kolom biner baru (0 atau 1).
-* **Alasan**: Sebagian besar algoritma *machine learning* memerlukan input data dalam bentuk numerik. *One-Hot Encoding* adalah metode yang efektif untuk mengubah fitur kategorikal menjadi representasi numerik tanpa menyiratkan hubungan ordinal antar kategori.
-
-```python
-from sklearn.preprocessing import OneHotEncoder
-categorical_cols = ['Glucose_Group', 'Insulin_Group', 'BloodPressure_Group', 'BMI_Group', 'Age_Group']
-encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
-encoded_data = encoder.transform(df_capped[categorical_cols])
-encoded_df = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(categorical_cols), index=df_capped.index)
-df_encoded = df_capped.drop(columns=categorical_cols).join(encoded_df)
-```
-
-### 4. Data Splitting
+### 3. Data Splitting
 
 * **Teknik yang Digunakan**: Pembagian dataset menjadi data latih (*training set*) dan data uji (*testing set*) menggunakan `train_test_split`.
 * **Proses**: Dataset dibagi menjadi 80% untuk data latih dan 20% untuk data uji, dengan `random_state` yang tetap untuk reproduktifitas. Fitur (`X`) dan variabel target (`y`) dipisahkan terlebih dahulu.
@@ -268,12 +232,12 @@ df_encoded = df_capped.drop(columns=categorical_cols).join(encoded_df)
 
 ```python
 from sklearn.model_selection import train_test_split
-X = df_encoded.drop('Outcome', axis=1)
-y = df_encoded['Outcome']
+X = df_capped.drop('Outcome', axis=1)
+y = df_capped['Outcome']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 ```
 
-### 5. Normalisasi Data (Data Scaling)
+### 4. Normalisasi Data (Data Scaling)
 
 * **Teknik yang Digunakan**: `StandardScaler`.
 * **Proses**: Fitur-fitur numerik (kecuali fitur hasil *one-hot encoding*) pada data latih dan data uji diskalakan menggunakan `StandardScaler`. `StandardScaler` mengubah data sehingga memiliki rata-rata 0 dan standar deviasi 1. `Scaler` hanya di-*fit* pada data latih untuk menghindari *data leakage*.
@@ -288,7 +252,7 @@ X_train[numerical_cols] = scaler.transform(X_train[numerical_cols])
 X_test[numerical_cols] = scaler.transform(X_test[numerical_cols])
 ```
 
-### 6. Data Balancing (pada data training)
+### 5. Data Balancing (pada data training)
 
 * **Teknik yang Digunakan**: SMOTE (Synthetic Minority Over-sampling Technique).
 * **Proses**: SMOTE diterapkan pada data latih (`X_train`, `y_train`) untuk mengatasi ketidakseimbangan kelas. SMOTE menghasilkan sampel sintetis baru untuk kelas minoritas (`Outcome = 1`) berdasarkan sampel terdekatnya, sehingga jumlah sampel di kelas minoritas menjadi seimbang dengan kelas mayoritas.
@@ -374,13 +338,13 @@ for name, model in models.items():
 Hasil akurasi awal dari model-model dasar (sebelum *tuning*) adalah:
 | Model                 | Akurasi Awal (Data Uji) |
 | :-------------------- | :---------------------- |
-| Decision Tree         | 0.8636                  |
-| Random Forest         | 0.8766                  |
-| Gradient Boosting     | 0.8896                  |
-| Extra Trees           | 0.8701                  |
-| AdaBoost              | 0.8831                  |
-| LightGBM              | 0.8636                  |
-| XGBoost               | 0.8571                  |
+| Decision Tree         | 0.8442                  |
+| Random Forest         | 0.8701                  |
+| Gradient Boosting     | 0.8766                  |
+| Extra Trees           | 0.8766                  |
+| AdaBoost              | 0.8701                  |
+| LightGBM              | 0.8766                  |
+| XGBoost               | 0.8636                  |
 
 ### 3. Hyperparameter Tuning
 
@@ -438,15 +402,15 @@ for name, model in models.items():
 
 **Hasil Penyetelan Hyperparameter (Tuning Summary):**
 
-| Model             | Best Parameters                                                | Best CV Score | Test Accuracy |
-| :---------------- | :------------------------------------------------------------- | :------------ | :------------ |
-| AdaBoost          | `{'learning_rate': 1.0, 'n_estimators': 200}`                  | 0.9028        | 0.9026        |
-| Gradient Boosting | `{'learning_rate': 0.2, 'max_depth': 7, 'n_estimators': 200, 'subsample': 0.8}` | 0.9290        | 0.8701        |
-| Decision Tree     | `{'max_depth': 15, 'min_samples_leaf': 2, 'min_samples_split': 2}` | 0.8854        | 0.8701        |
-| Random Forest     | `{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}` | 0.9116        | 0.8636        |
-| LightGBM          | `{'colsample_bytree': 1, 'learning_rate': 0.1, 'max_depth': -1, 'n_estimators': 500, 'num_leaves': 31, 'subsample': 0.8}` | 0.9302        | 0.8636        |
-| Extra Trees       | `{'max_depth': None, 'min_samples_split': 5, 'n_estimators': 300}` | 0.9016        | 0.8571        |
-| XGBoost           | `{'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}` | 0.9315        | 0.8571        |
+| Model             | Best Parameters                                                                                              | Best CV Score | Test Accuracy |
+|-------------------|---------------------------------------------------------------------------------------------------------------|----------------|----------------|
+| Gradient Boosting | `{'learning_rate': 0.2, 'max_depth': 7, 'n_estimators': 200, 'subsample': 0.8}`                                | 0.9339         | 0.8636         |
+| LightGBM          | `{'colsample_bytree': 0.7, 'learning_rate': 0.1, 'max_depth': -1, 'n_estimators': 500, 'num_leaves': 31, 'subsample': 0.8}` | 0.9302 | 0.8636 |
+| XGBoost           | `{'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}`        | 0.9240         | 0.8701         |
+| Extra Trees       | `{'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 300}`                                             | 0.9178         | 0.8896         |
+| Random Forest     | `{'max_depth': 10, 'max_features': 5, 'min_samples_split': 5, 'n_estimators': 200}`                          | 0.9190         | 0.8896         |
+| AdaBoost          | `{'learning_rate': 1.0, 'n_estimators': 200}`                                                                  | 0.8978         | 0.8831         |
+| Decision Tree     | `{'max_depth': 5, 'min_samples_leaf': 2, 'min_samples_split': 15}`                                             | 0.8853         | 0.8766         |
 
 ### 4. Memilih Best Model untuk Dievaluasi
 
@@ -466,26 +430,28 @@ print(f"\n🎉 The best model selected is: {best_model_name}")
 ```
 **Ringkasan Model Terbaik Berdasarkan Akurasi Uji:**
 
-| Model             | Best Parameters                                                | Best CV Score | Test Accuracy |
-| :---------------- | :------------------------------------------------------------- | :------------ | :------------ |
-| AdaBoost          | `{'learning_rate': 1.0, 'n_estimators': 200}`                  | 0.9028        | 0.9026        |
-| Gradient Boosting | `{'learning_rate': 0.2, 'max_depth': 7, 'n_estimators': 200, 'subsample': 0.8}` | 0.9290        | 0.8701        |
-| Decision Tree     | `{'max_depth': 15, 'min_samples_leaf': 2, 'min_samples_split': 2}` | 0.8854        | 0.8701        |
-| Random Forest     | `{'max_depth': None, 'max_features': 'sqrt', 'min_samples_split': 5, 'n_estimators': 100}` | 0.9116        | 0.8636        |
-| LightGBM          | `{'colsample_bytree': 1, 'learning_rate': 0.1, 'max_depth': -1, 'n_estimators': 500, 'num_leaves': 31, 'subsample': 0.8}` | 0.9302        | 0.8636        |
-| Extra Trees       | `{'max_depth': None, 'min_samples_split': 5, 'n_estimators': 300}` | 0.9016        | 0.8571        |
-| XGBoost           | `{'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}` | 0.9315        | 0.8571        |
 
-**Model terbaik yang terpilih adalah: AdaBoost.**
+| Model             | Best Parameters                                                                                              | Best CV Score | Test Accuracy |
+|-------------------|---------------------------------------------------------------------------------------------------------------|----------------|----------------|
+| Random Forest     | `{'max_depth': 10, 'max_features': 5, 'min_samples_split': 5, 'n_estimators': 200}`                          | 0.9190         | 0.8896         |
+| Extra Trees       | `{'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 300}`                                             | 0.9178         | 0.8896         |
+| AdaBoost          | `{'learning_rate': 1.0, 'n_estimators': 200}`                                                                  | 0.8978         | 0.8831         |
+| XGBoost           | `{'colsample_bytree': 0.5, 'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 200, 'subsample': 0.8}`        | 0.9240         | 0.8701         |
+| Decision Tree     | `{'max_depth': 5, 'min_samples_leaf': 2, 'min_samples_split': 15}`                                             | 0.8853         | 0.8766         |
+| Gradient Boosting | `{'learning_rate': 0.2, 'max_depth': 7, 'n_estimators': 200, 'subsample': 0.8}`                                | 0.9339         | 0.8636         |
+| LightGBM          | `{'colsample_bytree': 0.7, 'learning_rate': 0.1, 'max_depth': -1, 'n_estimators': 500, 'num_leaves': 31, 'subsample': 0.8}` | 0.9302 | 0.8636 |
 
-**Alasan Pemilihan AdaBoost sebagai Model Terbaik:**
-AdaBoost menunjukkan akurasi tertinggi pada data uji (`Test Accuracy: 0.9026`) dibandingkan dengan model-model lain setelah proses *hyperparameter tuning*. Meskipun beberapa model lain (seperti LightGBM dan XGBoost) memiliki *Best CV Score* yang sedikit lebih tinggi, *Test Accuracy* adalah metrik paling relevan untuk mengevaluasi kinerja model pada data baru. AdaBoost berhasil mempertahankan kinerja generalisasi yang sangat baik pada data yang belum pernah dilihat.
+
+**Model terbaik yang terpilih adalah: Random Forest.**
+
+**Alasan Pemilihan Random Forest sebagai Model Terbaik:**
+Random Forest menunjukkan akurasi tertinggi pada data uji (`Test Accuracy: 0.8896`) dibandingkan dengan model-model lain setelah proses *hyperparameter tuning*. Meskipun beberapa model lain (seperti Gradient Boosting dan LightGBM) memiliki *Best CV Score* yang sedikit lebih tinggi, *Test Accuracy* adalah metrik paling relevan untuk mengevaluasi kinerja model pada data baru. AdaBoost berhasil mempertahankan kinerja generalisasi yang sangat baik pada data yang belum pernah dilihat.
 
 ## Evaluation
 
 Tahap evaluasi model adalah langkah krusial untuk mengukur seberapa baik model yang telah dilatih mampu memprediksi penyakit diabetes pada data yang belum pernah dilihat. Evaluasi ini dilakukan menggunakan beberapa metrik yang relevan untuk masalah klasifikasi biner, terutama mengingat adanya ketidakseimbangan kelas pada dataset.
 
-### Metrik Evaluasi dan Hasil Proyek (AdaBoost)
+### Metrik Evaluasi dan Hasil Proyek (Random Forest)
 
 Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut adalah metrik evaluasi yang digunakan dan interpretasi hasilnya pada data uji:
 
@@ -497,8 +463,8 @@ Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut a
     * FP (False Positive): Jumlah prediksi positif yang salah (seharusnya negatif).
     * FN (False Negative): Jumlah prediksi negatif yang salah (seharusnya positif).
 * **Cara Kerja**: Akurasi memberikan gambaran umum tentang seberapa sering model membuat prediksi yang benar.
-* **Hasil Proyek**: Akurasi AdaBoost pada Data Uji adalah **0.9026**.
-* **Interpretasi**: Model AdaBoost menunjukkan akurasi yang tinggi, sekitar 90.26% prediksi yang benar secara keseluruhan. Ini merupakan indikasi kinerja yang solid, meskipun akurasi saja mungkin tidak cukup karena adanya ketidakseimbangan kelas pada dataset.
+* **Hasil Proyek**: Akurasi AdaBoost pada Data Uji adalah **0.8896**.
+* **Interpretasi**: Model AdaBoost menunjukkan akurasi yang tinggi, sekitar 88.96% prediksi yang benar secara keseluruhan. Ini merupakan indikasi kinerja yang solid, meskipun akurasi saja mungkin tidak cukup karena adanya ketidakseimbangan kelas pada dataset.
 
 #### 2. Confusion Matrix
 
@@ -511,13 +477,13 @@ Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut a
 * **Hasil Proyek**: *Confusion Matrix* untuk AdaBoost adalah:
     ```
     [[90  9]
-     [ 6 49]]
+     [ 8 47]]
     ```
     * **True Negative (TN)**: 90
     * **False Positive (FP)**: 9
-    * **False Negative (FN)**: 6
-    * **True Positive (TP)**: 49
-* **Interpretasi**: Dari 99 pasien non-diabetes (90 TN + 9 FP), model berhasil mengidentifikasi 90 dengan benar. Dari 55 pasien diabetes (6 FN + 49 TP), model berhasil mengidentifikasi 49 dengan benar.
+    * **False Negative (FN)**: 8
+    * **True Positive (TP)**: 47
+* **Interpretasi**: Dari 99 pasien non-diabetes (90 TN + 9 FP), model berhasil mengidentifikasi 90 dengan benar. Dari 55 pasien diabetes (8 FN + 47 TP), model berhasil mengidentifikasi 47 dengan benar.
 
 #### 3. Laporan Klasifikasi (Classification Report)
 * **Cara Kerja**: Laporan ini menyediakan ringkasan metrik *Precision*, *Recall*, dan *F1-Score* untuk setiap kelas.
@@ -528,32 +494,143 @@ Model terbaik yang terpilih dari tahap *modeling* adalah **AdaBoost**. Berikut a
     * **F1-Score**: *Harmonic mean* dari *Precision* dan *Recall*, baik digunakan saat ada ketidakseimbangan kelas.
         $F1-Score = 2 \times \frac{Precision \times Recall}{Precision + Recall}$
 * **Konteks Proyek**: Untuk prediksi diabetes, *Recall* untuk kelas 'Diabetes (1)' seringkali sangat penting untuk mendeteksi sebagian besar pasien yang benar-benar sakit.
-* **Hasil Proyek**: Laporan Klasifikasi untuk AdaBoost adalah:
+* **Hasil Proyek**: Laporan Klasifikasi untuk Random Forest adalah:
     ```
-    📄 Laporan Klasifikasi untuk AdaBoost:
-                      precision    recall  f1-score   support
+    📄 Laporan Klasifikasi untuk Random Forest:
+                        precision    recall  f1-score   support
 
-    Tidak Diabetes (0)       0.94      0.91      0.92        99
-    Diabetes (1)             0.84      0.89      0.87        55
+    Tidak Diabetes (0)      0.92      0.91      0.91        99
+    Diabetes (1)            0.84      0.85      0.85        55
 
-            accuracy                           0.90       154
-           macro avg       0.89      0.90      0.90       154
-        weighted avg       0.90      0.90      0.90       154
+          accuracy                              0.89       154
+         macro avg          0.88      0.88      0.88       154
+      weighted avg          0.89      0.89      0.89       154
     ```
 * **Interpretasi**:
-    * Untuk kelas **'Tidak Diabetes (0)'**: *Precision* 0.94, *Recall* 0.91, dan F1-Score 0.92. Model sangat baik dalam mengidentifikasi pasien yang tidak menderita diabetes.
-    * Untuk kelas **'Diabetes (1)'**: *Precision* 0.84, *Recall* 0.89, dan F1-Score 0.87. *Recall* sebesar 0.89 berarti model berhasil mendeteksi 89% dari pasien yang sebenarnya menderita diabetes, metrik yang krusial untuk mencegah diagnosis yang terlewat. *Precision* 0.84 menunjukkan bahwa 84% prediksi diabetes oleh model adalah benar. F1-Score 0.87 menunjukkan keseimbangan yang baik antara *precision* dan *recall* untuk kelas minoritas.
+    * Untuk kelas **'Tidak Diabetes (0)'**: *Precision* 0.92, *Recall* 0.91, dan F1-Score 0.91. Model sangat baik dalam mengidentifikasi pasien yang tidak menderita diabetes, dengan keseimbangan yang kuat antara precision dan recall.
+    * Untuk kelas **'Diabetes (1)'**: *Precision* 0.84, *Recall* 0.85, dan F1-Score 0.85. *Recall* sebesar 0.85 menunjukkan bahwa model mampu mendeteksi 85% dari pasien yang benar-benar menderita diabetes—metrik yang penting untuk meminimalkan kasus terlewat. *Precision* 0.84 berarti 84% dari prediksi “Diabetes” adalah benar. F1-Score 0.85 menunjukkan performa yang seimbang dan cukup baik untuk kelas minoritas.
 
 #### 4. ROC AUC Score dan Kurva ROC
 
-* **Cara Kerja**: Kurva ROC adalah plot dari *True Positive Rate (TPR)* atau *Recall* terhadap *False Positive Rate (FPR)* pada berbagai ambang batas klasifikasi.
-    $FPR = \frac{FP}{FP + TN}$
-    ROC AUC Score adalah area di bawah kurva ROC, dengan nilai berkisar dari 0 (prediksi acak) hingga 1 (model sempurna).
-* **Konteks Proyek**: ROC AUC adalah metrik yang sangat baik untuk mengevaluasi kinerja model klasifikasi biner, terutama ketika ada ketidakseimbangan kelas, karena mengukur kemampuan model untuk membedakan antara kelas positif dan negatif di berbagai ambang batas.
-* **Hasil Proyek**: ROC AUC Score untuk AdaBoost adalah **0.94**.
-* **Interpretasi**: Nilai AUC yang sangat tinggi (0.94) menunjukkan bahwa model memiliki kemampuan diskriminasi yang luar biasa. Artinya, model sangat baik dalam membedakan antara pasien yang positif diabetes dan negatif diabetes, tanpa terpengaruh oleh ambang batas klasifikasi tertentu.
+* **Cara Kerja**: Kurva ROC memplot *True Positive Rate (TPR)* terhadap *False Positive Rate (FPR)* pada berbagai ambang batas.  
 
-Secara keseluruhan, model AdaBoost menunjukkan kinerja yang sangat menjanjikan dalam memprediksi diabetes. Akurasi tinggi, F1-score yang baik untuk kelas minoritas, dan terutama nilai ROC AUC yang luar biasa, mengindikasikan bahwa model ini memiliki potensi besar sebagai alat prediksi awal untuk penyakit diabetes.
+    $$
+    FPR = \frac{FP}{FP + TN}
+    $$
+
+  ROC AUC mengukur area di bawah kurva tersebut—semakin besar nilainya, semakin baik model membedakan kelas positif dan negatif.
+* **Konteks Proyek**: ROC AUC sangat berguna untuk evaluasi model klasifikasi biner, terutama ketika terdapat ketidakseimbangan kelas.
+* **Hasil Proyek**: ROC AUC Score untuk **Random Forest** adalah **0.94**.
+* **Interpretasi**:  Nilai AUC 0.94 menunjukkan kemampuan diskriminasi yang sangat baik. Model mampu membedakan pasien diabetes dan non-diabetes secara konsisten di berbagai ambang batas klasifikasi.
+
+#### 5. Feature Importance
+
+Tabel berikut menunjukkan kontribusi masing-masing fitur terhadap keputusan model Random Forest. Angka yang lebih tinggi menunjukkan pengaruh yang lebih besar terhadap prediksi diabetes.
+
+| Rank  | Feature                  | Importance   |
+| ----- | ------------------------ | ------------ |
+| **1** | **Insulin**              | **0.448762** |
+| **2** | SkinThickness            | 0.112620     |
+| **3** | Age                      | 0.108688     |
+| **4** | Glucose                  | 0.102226     |
+| **5** | Glucose_Insulin_Ratio    | 0.091267     |
+| **6** | BMI                      | 0.045567     |
+| **7** | DiabetesPedigreeFunction | 0.040259     |
+| **8** | BloodPressure            | 0.026875     |
+| **9** | Pregnancies              | 0.023736     |
+
+
+
+**Interpretasi Feature Importance**
+
+1. **Insulin (0.4487)** → menjadi faktor paling dominan.
+   Level insulin berhubungan erat dengan resistensi insulin, kondisi fisiologis utama penyebab diabetes tipe 2.
+2. **SkinThickness & BMI** → indikator lemak tubuh → berkaitan dengan risiko metabolik.
+3. **Age** → semakin tua usia, semakin tinggi risiko diabetes.
+4. **Glucose** → tetap menjadi fitur penting dalam diagnosis, sesuai standar medis.
+5. **Glucose_Insulin_Ratio** → fitur rekayasa (feature engineering) yang kamu buat memberikan kontribusi signifikan, membuktikan keberhasilan proses pembuatan fitur.
+6. **DiabetesPedigreeFunction** → faktor genetika tetap berpengaruh, namun tidak sebesar faktor fisiologis (insulin, glucose, BMI).
+7. **Pregnancies** → berpengaruh kecil tetapi relevan (terutama gestational diabetes).
+
+## Kesimpulan
+Proyek ini bertujuan membangun model *predictive analysis* untuk memprediksi risiko diabetes menggunakan dataset Pima Indians Diabetes Database. Melalui tahapan Data Understanding, Data Preparation, Modeling, dan Model Evaluation, beberapa poin utama dapat disimpulkan:
+
+1. **Pemahaman Data Awal**
+    
+    Dataset menunjukkan adanya beberapa masalah seperti nilai 0 yang tidak realistis pada fitur Glucose, Blood Pressure, Skin Thickness, Insulin, dan BMI, keberadaan *outlier*, serta ketidakseimbangan kelas pada variabel target. Fitur-fitur seperti **Glucose**, **BMI**, dan **Age** teridentifikasi memiliki pengaruh signifikan terhadap outcome diabetes berdasarkan analisis awal korelasi.
+
+2. **Persiapan Data yang Efektif**
+
+    Berbagai permasalahan data berhasil ditangani melalui proses *data cleaning* dan *feature engineering*, meliputi:
+    * Imputasi nilai 0 dengan mean berdasarkan kelompok outcome,
+    * Capping *outlier* menggunakan Winsorizing,
+    * Pembuatan fitur baru seperti **Glucose-Insulin Ratio**,
+    * Penanganan ketidakseimbangan kelas menggunakan **SMOTE**,
+    * Normalisasi fitur numerik menggunakan **StandardScaler**.
+      Tahapan ini berkontribusi pada peningkatan kualitas data sebelum dilakukan pemodelan.
+
+3. **Evaluasi Model yang Komprehensif**
+
+    Berbagai model tree-based dan ensemble diuji, seperti Decision Tree, Random Forest, Gradient Boosting, Extra Trees, AdaBoost, LightGBM, dan XGBoost.
+    Proses **hyperparameter tuning** dilakukan menggunakan Grid Search dan Cross-Validation (cv=5) untuk memperoleh konfigurasi model terbaik.
+
+4. **Kinerja Model Terbaik**
+
+    Model terbaik dipilih berdasarkan performa pada data uji dan dievaluasi menggunakan metrik:
+
+    * **Confusion Matrix**,
+    * **Precision, Recall, dan F1-Score**,
+    * **Accuracy**,
+    * **ROC AUC Score**.
+
+    Hasil evaluasi menunjukkan bahwa model memiliki kemampuan yang baik dalam membedakan antara pasien diabetes dan non-diabetes, serta mendeteksi kasus diabetes secara efektif.
+
+5. **Feature Importance (Fitur yang Paling Berpengaruh)**
+
+    Analisis feature importance pada model terbaik menunjukkan bahwa beberapa fitur memiliki kontribusi besar dalam proses prediksi:
+
+    * **Insulin** merupakan fitur paling berpengaruh dengan importance tertinggi (0.4487), menunjukkan perannya yang kuat dalam membedakan risiko diabetes.
+    * **SkinThickness**, **Age**, dan **Glucose** juga memberikan kontribusi penting terhadap keputusan model.
+    * Fitur hasil rekayasa, seperti **Glucose-Insulin Ratio**, memberikan pengaruh yang signifikan, mendukung keberhasilan proses feature engineering.
+    * Fitur lain seperti BMI, DiabetesPedigreeFunction, BloodPressure, dan Pregnancies memiliki pengaruh lebih rendah namun tetap relevan dalam interpretasi risiko.
+
+    Analisis ini membantu memahami bagaimana model membuat keputusan dan fitur mana yang paling berperan dalam prediksi diabetes.
+
+**Kesimpulan Akhir**
+
+Secara keseluruhan, proyek ini berhasil mengembangkan model prediksi diabetes yang robust dengan menangani masalah data secara komprehensif dan mengevaluasi kinerja model dengan metrik yang tepat.
+Model yang dipilih menunjukkan performa yang menjanjikan untuk digunakan sebagai alat skrining awal, meskipun diperlukan validasi lanjutan dengan dataset yang lebih luas dan bervariasi untuk memastikan generalisasi dan akurasi model di lingkungan nyata.
+
+## Rekomendasi
+
+Beberapa rekomendasi untuk implementasi model di lingkungan nyata:
+
+1. **Gunakan model sebagai alat skrining awal**, bukan diagnosis akhir.
+2. **Integrasikan ke sistem klinis** agar dapat memberikan peringatan risiko diabetes secara otomatis.
+3. **Lakukan pelatihan model menggunakan data rumah sakit lokal**, karena variasi demografis dapat memengaruhi performa.
+4. **Monitor performa model secara berkala**, terutama nilai Recall pada kelas diabetes.
+5. **Kolaborasi dengan tenaga medis** untuk menerjemahkan output model ke dalam keputusan klinis yang aman.
+
+## Limitasi Model
+
+Beberapa batasan yang perlu diperhatikan:
+
+* Dataset relatif **kecil (768 sampel)** → risiko overfitting.
+* Tidak mencakup data klinis yang lebih kompleks seperti riwayat keluarga, pola makan, atau gaya hidup.
+* Fitur Insulin memiliki banyak missing yang tidak langsung terlihat (bernilai 0).
+* Performanya dapat menurun ketika digunakan pada populasi berbeda (misalnya ras atau usia yang berbeda).
+* SMOTE menambah data sintetis yang mungkin tidak sepenuhnya mencerminkan kondisi nyata.
+
+## Saran untuk Pengembangan Selanjutnya
+
+Model dapat ditingkatkan dengan:
+
+1. **Mengumpulkan dataset yang lebih besar dan lebih bervariasi.**
+2. **Menggunakan teknik balancing lain** seperti ADASYN atau SMOTEENN untuk membandingkan hasil.
+3. **Mengeksplorasi model lain seperti CatBoost**, yang sering unggul pada data tabular.
+4. **Menerapkan teknik explainable AI** seperti SHAP untuk interpretasi lebih dalam.
+5. **Membangun pipeline deployment** (API/Streamlit dashboard) agar model bisa digunakan end-user.
+6. **Melakukan hyperparameter tuning yang lebih luas** menggunakan RandomizedSearch atau Bayesian Optimization.
 
 ---
 
