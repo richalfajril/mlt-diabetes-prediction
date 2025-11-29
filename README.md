@@ -394,9 +394,9 @@ Artifacts ini dimuat oleh `app.py` menggunakan `joblib.load()` untuk memberikan 
 
 ### Clinical Implications
 
-🩺 Model dapat menjadi alat screening awal yang efektif
-🩺 Recall 82% penting untuk deteksi dini dan mencegah False Negatives
-🩺 Feature importance align dengan pengetahuan medis (insulin resistance → diabetes)
+- 🩺 Model dapat menjadi alat screening awal yang efektif
+- 🩺 Recall 82% penting untuk deteksi dini dan mencegah False Negatives
+- 🩺 Feature importance align dengan pengetahuan medis (insulin resistance → diabetes)
 
 ---
 
