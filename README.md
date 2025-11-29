@@ -9,6 +9,10 @@ _Early Detection of Diabetes Risk using Tree-Based Models_
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+### 🚀 [Try the Live Demo](https://mlt-diabetes-prediction.streamlit.app/)
+
+Akses aplikasi Streamlit secara online tanpa perlu instalasi lokal
+
 Built with the tools and technologies:
 
 ![Scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
@@ -71,8 +75,6 @@ Proyek ini menggunakan dataset **Pima Indians Diabetes Database** yang tersedia 
 **Catatan Khusus:** Data memiliki masalah **ketidakseimbangan kelas** dan **nilai 0 yang tidak realistis secara medis** pada fitur seperti `Glucose`, `BloodPressure`, `BMI`, dll., yang memerlukan pra-pemrosesan khusus.
 
 ---
-
-## Metodologi dan Pemodelan
 
 ## Metodologi dan Pemodelan
 
@@ -223,6 +225,14 @@ Actual Positive         10                    45
 
 Untuk memulai dan menjalankan proyek ini di mesin lokal Anda, ikuti petunjuk di bawah ini.
 
+### Quick Start - Live Demo
+
+Cara tercepat untuk mencoba aplikasi adalah mengakses demo online tanpa instalasi:
+
+👉 **[Buka Demo Streamlit](https://mlt-diabetes-prediction.streamlit.app/)**
+
+Demo ini sudah dilengkapi dengan model yang telah dilatih dan siap untuk prediksi risiko diabetes secara real-time.
+
 ### Prerequisites
 
 Anda memerlukan lingkungan Python yang dikonfigurasi. Pastikan Anda memiliki:
@@ -263,9 +273,19 @@ Anda memerlukan lingkungan Python yang dikonfigurasi. Pastikan Anda memiliki:
 
 ### Usage
 
-Proyek ini menyediakan dua cara untuk menggunakan hasil pemodelan:
+Proyek ini menyediakan beberapa cara untuk menggunakan hasil pemodelan:
 
-#### 1. **Jupyter Notebook (Analisis Lengkap)**
+#### 1. **Demo Online (Paling Cepat - Direkomendasikan!)**
+
+Jika hanya ingin mencoba prediksi tanpa instalasi:
+
+```
+👉 https://mlt-diabetes-prediction.streamlit.app/
+```
+
+Buka link di browser dan langsung gunakan aplikasi untuk memprediksi risiko diabetes.
+
+#### 2. **Jupyter Notebook (Analisis Lengkap)**
 
 Untuk melihat seluruh proses dari EDA, preprocessing, modeling, hingga evaluasi:
 
@@ -275,7 +295,7 @@ jupyter notebook MLT1_Diabetes_Prediction.ipynb
 
 Buka file di browser dan jalankan setiap sel secara berurutan untuk mereplikasi seluruh workflow proyek.
 
-#### 2. **Streamlit Web Application (Prediksi Interaktif)**
+#### 3. **Streamlit Web Application (Prediksi Interaktif)**
 
 Untuk menggunakan model dalam aplikasi web yang user-friendly:
 
@@ -290,7 +310,7 @@ Aplikasi akan membuka di `http://localhost:8501` dengan interface untuk:
 - Visualisasi probabilitas prediksi
 - Interpretasi hasil dengan interface yang intuitif
 
-#### 3. **Python Script (Training & Prediction)**
+#### 4. **Python Script (Training & Prediction)**
 
 Untuk menjalankan logika pemodelan dalam format script Python:
 
@@ -360,17 +380,17 @@ Artifacts ini dimuat oleh `app.py` menggunakan `joblib.load()` untuk memberikan 
 
 ### Preprocessing Highlights
 
-✅ **Imputasi Nilai 0**: Mengganti nilai 0 yang tidak realistis dengan mean berdasarkan outcome grup
-✅ **Outlier Handling**: IQR-based capping mengurangi dampak nilai ekstrem tanpa kehilangan data
-✅ **Feature Engineering**: Glucose_Insulin_Ratio terbukti kontribusi signifikan (9.13%)
-✅ **SMOTE Balancing**: Mengatasi imbalance dari 65:35 menjadi seimbang pada training data
+- ✅ **Imputasi Nilai 0**: Mengganti nilai 0 yang tidak realistis dengan mean berdasarkan outcome grup
+- ✅ **Outlier Handling**: IQR-based capping mengurangi dampak nilai ekstrem tanpa kehilangan data
+- ✅ **Feature Engineering**: Glucose_Insulin_Ratio terbukti kontribusi signifikan (9.13%)
+- ✅ **SMOTE Balancing**: Mengatasi imbalance dari 65:35 menjadi seimbang pada training data
 
 ### Model Performance
 
-✅ **Akurasi**: 88.96% - Prediksi yang akurat secara keseluruhan
-✅ **Recall (Diabetes)**: 82% - Mampu mendeteksi 82% dari kasus diabetes aktual
-✅ **Precision (Diabetes)**: 83% - Prediksi positif yang reliable
-✅ **Feature Importance**: Insulin dominan (44.88%), diikuti SkinThickness, Age, dan Glucose
+- ✅ **Akurasi**: 88.96% - Prediksi yang akurat secara keseluruhan
+- ✅ **Recall (Diabetes)**: 82% - Mampu mendeteksi 82% dari kasus diabetes aktual
+- ✅ **Precision (Diabetes)**: 83% - Prediksi positif yang reliable
+- ✅ **Feature Importance**: Insulin dominan (44.88%), diikuti SkinThickness, Age, dan Glucose
 
 ### Clinical Implications
 
