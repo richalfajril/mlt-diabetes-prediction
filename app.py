@@ -44,14 +44,12 @@ def main():
             "Usia",
             min_value=0,
             value=0,
-            placeholder="Masukkan usia di sini"
         )
 
         pregnancies = st.number_input(
             "Jumlah Kehamilan",
             min_value=0,
             value=0,
-            placeholder="Masukkan jumlah kehamilan"
         )
 
     with col_basic2:
@@ -69,14 +67,12 @@ def main():
             "BMI",
             min_value=0.0,
             value=0.0,
-            placeholder="Masukkan nilai BMI"
         )
 
         skin_thickness = st.number_input(
             "Ketebalan Kulit (mm)",
             min_value=0,
             value=0,
-            placeholder="Masukkan ketebalan kulit"
         )
 
     with col_physical2:
@@ -84,7 +80,6 @@ def main():
             "Tekanan Darah (mm Hg)",
             min_value=0,
             value=0,
-            placeholder="Masukkan tekanan darah"
         )
 
     # ==============================
@@ -98,7 +93,6 @@ def main():
             "Kadar Glukosa (mg/dL)",
             min_value=0,
             value=0,
-            placeholder="Masukkan kadar glukosa"
         )
 
     with col_lab2:
@@ -106,7 +100,6 @@ def main():
             "Kadar Insulin (mu U/ml)",
             min_value=0,
             value=0,
-            placeholder="Masukkan kadar insulin"
         )
 
     # ==============================
