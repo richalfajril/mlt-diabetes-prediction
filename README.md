@@ -20,6 +20,10 @@ Built with the tools and technologies:
 ![LightGBM](https://img.shields.io/badge/LightGBM-4A9D0A?style=for-the-badge&logo=lightgbm&logoColor=white)
 ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 ![Matplotlib](https://img.shields.io/badge/Matplotlib-368DE4?style=for-the-badge&logo=matplotlib&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge\&logo=numpy\&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge\&logo=streamlit\&logoColor=white)
+![Imbalanced-learn](https://img.shields.io/badge/Imbalanced--learn-0A66C2?style=for-the-badge\&logo=scikit-learn\&logoColor=white)
+
 
 </div>
 
